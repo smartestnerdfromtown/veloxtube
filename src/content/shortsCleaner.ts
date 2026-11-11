@@ -34,14 +34,16 @@ export const createShortsCleaner = ({
     }
 
     for (const element of root.querySelectorAll(matcher)) {
-      remove(element);
+      if (element.isConnected) {
+        remove(element);
+      }
     }
   };
 
   const onMutations = (records: MutationRecord[]): void => {
     for (const record of records) {
       for (const node of record.addedNodes) {
-        if (node instanceof Element) {
+        if (node instanceof Element && node.isConnected) {
           purge(node);
         }
       }
@@ -61,7 +63,7 @@ export const createShortsCleaner = ({
 
     const root = document.querySelector(container);
 
-    if (root === target) {
+    if (root === target && root?.isConnected) {
       return;
     }
 

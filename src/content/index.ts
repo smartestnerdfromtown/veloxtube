@@ -37,15 +37,20 @@ browser.storage.onChanged.addListener((changes, area) => {
     return;
   }
 
+  let changed = false;
+
   for (const key of KEYS) {
     const change = changes[key];
 
     if (change) {
       flags = { ...flags, [key]: change.newValue as boolean };
+      changed = true;
     }
   }
 
-  schedule();
+  if (changed) {
+    schedule();
+  }
 });
 
 void browser.storage.local.get([...KEYS]).then((stored) => {
