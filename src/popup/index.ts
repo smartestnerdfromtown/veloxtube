@@ -20,6 +20,14 @@ const getInput = (key: Key): HTMLInputElement => {
 
 const inputs = KEYS.map((key) => [key, getInput(key)] as const);
 
+const reloadYouTubeTab = async (): Promise<void> => {
+  const [tab] = await browser.tabs.query({ active: true, currentWindow: true });
+
+  if (tab?.id !== undefined && tab.url?.startsWith("https://www.youtube.com")) {
+    await browser.tabs.reload(tab.id);
+  }
+};
+
 void browser.storage.local.get([...KEYS]).then((stored) => {
   for (const [key, input] of inputs) {
     input.checked = (stored[key] as boolean | undefined) ?? DEFAULTS[key];
@@ -28,6 +36,6 @@ void browser.storage.local.get([...KEYS]).then((stored) => {
 
 for (const [key, input] of inputs) {
   input.addEventListener("change", () => {
-    void browser.storage.local.set({ [key]: input.checked });
+    void browser.storage.local.set({ [key]: input.checked }).then(reloadYouTubeTab);
   });
 }
