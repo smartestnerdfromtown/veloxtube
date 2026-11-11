@@ -1,4 +1,5 @@
 import { initHomeShorts } from "./homeShorts";
+import { initSearchShorts } from "./searchShorts";
 
 const ROOT_CLASS = "veloxtube";
 
@@ -8,6 +9,7 @@ const apply = (): void => {
   scheduled = false;
   document.documentElement.classList.add(ROOT_CLASS);
   initHomeShorts();
+  initSearchShorts();
 };
 
 const schedule = (): void => {

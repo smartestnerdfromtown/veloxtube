@@ -9,3 +9,23 @@ ytd-browse[page-subtype="home"] ytd-rich-item-renderer:has(a[href^="/shorts/"]),
 ytd-browse[page-subtype="home"] ytd-reel-item-renderer {
   display: none !important;
 }
+
+ytd-search ytd-reel-shelf-renderer,
+ytd-search ytd-reel-item-renderer,
+ytd-search grid-shelf-view-model:has(a[href^="/shorts/"]),
+ytd-search grid-shelf-view-model:has(.shortsLockupViewModelHost),
+ytd-search ytm-shorts-lockup-view-model,
+ytd-search ytm-shorts-lockup-view-model-v2,
+ytd-search ytd-rich-shelf-renderer[is-shorts],
+ytd-search ytd-rich-shelf-renderer:has(ytm-shorts-lockup-view-model),
+ytd-search ytd-rich-section-renderer:has(ytd-reel-shelf-renderer),
+ytd-search ytd-rich-section-renderer:has(ytd-rich-shelf-renderer[is-shorts]),
+ytd-search ytd-rich-item-renderer:has(ytm-shorts-lockup-view-model),
+ytd-search ytd-rich-item-renderer:has(a[href^="/shorts/"]),
+ytd-search ytd-video-renderer:has(a[href^="/shorts/"]),
+ytd-search ytd-video-renderer:has(ytm-shorts-lockup-view-model),
+ytd-search ytd-video-renderer:has([overlay-style="SHORTS"]),
+ytd-search ytd-video-renderer:has(badge-shape[aria-label="Shorts"]),
+ytd-search yt-lockup-view-model:has(a[href^="/shorts/"]) {
+  display: none !important;
+}
