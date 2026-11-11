@@ -45,14 +45,18 @@ const setFooterStyles = (enabled: boolean): void => {
   (document.head ?? document.documentElement).append(styleElement);
 };
 
+const disconnectObserver = (): void => {
+  observer?.disconnect();
+  observer = null;
+  observedRoot = null;
+};
+
 export const initSidebarFooter = (enabled: boolean): void => {
   active = enabled;
   setFooterStyles(enabled);
 
   if (!enabled) {
-    observer?.disconnect();
-    observer = null;
-    observedRoot = null;
+    disconnectObserver();
     return;
   }
 
@@ -62,14 +66,14 @@ export const initSidebarFooter = (enabled: boolean): void => {
     return;
   }
 
-  observer?.disconnect();
-  observedRoot = root;
+  disconnectObserver();
 
   if (!root) {
     return;
   }
 
-  observer ??= new MutationObserver(scheduleCleanup);
+  observer = new MutationObserver(scheduleCleanup);
+  observedRoot = root;
   observer.observe(root, { childList: true, subtree: true });
   scheduleCleanup();
 };
