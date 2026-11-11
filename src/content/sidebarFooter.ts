@@ -1,15 +1,33 @@
-import { createShortsCleaner } from "./shortsCleaner";
-
-const FOOTER_CSS = "ytd-guide-renderer #footer { display: none !important; }";
-
-// #guide-content survives guide re-renders, so the observer outlives ytd-guide-renderer.
-const cleanFooter = createShortsCleaner({
-  container: "#guide-content",
-  matcher: "#footer",
-  subtree: true,
-});
+const FOOTER_SELECTOR = "#guide-content ytd-guide-renderer #footer";
+const FOOTER_CSS = `${FOOTER_SELECTOR} { display: none !important; }`;
+const GUIDE_ROOT = "#guide-wrapper";
 
 let styleElement: HTMLStyleElement | null = null;
+let observer: MutationObserver | null = null;
+let observedRoot: Element | null = null;
+let scheduled = false;
+let active = false;
+
+const detachFooters = (): void => {
+  scheduled = false;
+
+  if (!active) {
+    return;
+  }
+
+  for (const footer of document.querySelectorAll(FOOTER_SELECTOR)) {
+    footer.remove();
+  }
+};
+
+const scheduleCleanup = (): void => {
+  if (scheduled) {
+    return;
+  }
+
+  scheduled = true;
+  queueMicrotask(detachFooters);
+};
 
 const setFooterStyles = (enabled: boolean): void => {
   if (!enabled) {
@@ -28,6 +46,30 @@ const setFooterStyles = (enabled: boolean): void => {
 };
 
 export const initSidebarFooter = (enabled: boolean): void => {
+  active = enabled;
   setFooterStyles(enabled);
-  cleanFooter(enabled);
+
+  if (!enabled) {
+    observer?.disconnect();
+    observer = null;
+    observedRoot = null;
+    return;
+  }
+
+  const root = document.querySelector(GUIDE_ROOT);
+
+  if (root === observedRoot && root?.isConnected) {
+    return;
+  }
+
+  observer?.disconnect();
+  observedRoot = root;
+
+  if (!root) {
+    return;
+  }
+
+  observer ??= new MutationObserver(scheduleCleanup);
+  observer.observe(root, { childList: true, subtree: true });
+  scheduleCleanup();
 };
