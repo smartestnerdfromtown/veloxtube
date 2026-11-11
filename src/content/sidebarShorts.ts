@@ -1,7 +1,7 @@
 import { createShortsCleaner } from "./shortsCleaner";
 
 const MATCHER =
-  'ytd-guide-entry-renderer:has(a[title="Shorts"]), ytd-guide-entry-renderer:has(a[href^="/shorts"]), ytd-mini-guide-entry-renderer:has(a[href^="/shorts"]), ytd-mini-guide-entry-renderer[aria-label="Shorts"]';
+  'ytd-guide-entry-renderer:has(a[title="Shorts"]), ytd-guide-entry-renderer:has(a[aria-label="Shorts"]), ytd-guide-entry-renderer:has(a[href^="/shorts"]), ytd-mini-guide-entry-renderer:has(a[title="Shorts"]), ytd-mini-guide-entry-renderer:has(a[aria-label="Shorts"]), ytd-mini-guide-entry-renderer:has(a[href^="/shorts"]), ytd-mini-guide-entry-renderer[aria-label="Shorts"]';
 
 const cleanGuide = createShortsCleaner({
   container: "ytd-guide-renderer",
