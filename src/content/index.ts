@@ -1,6 +1,7 @@
 import { initHomeShorts } from "./homeShorts";
 import { initSearchShorts } from "./searchShorts";
 import { initSidebarShorts } from "./sidebarShorts";
+import { initSidebarFooter } from "./sidebarFooter";
 
 const HOME_CLASS = "veloxtube-home";
 const SEARCH_CLASS = "veloxtube-search";
@@ -30,6 +31,7 @@ const apply = (): void => {
   initHomeShorts(flags.homeShortsEnabled);
   initSearchShorts(flags.searchShortsEnabled);
   initSidebarShorts(flags.sidebarShortsEnabled);
+  initSidebarFooter();
 };
 
 const schedule = (): void => {

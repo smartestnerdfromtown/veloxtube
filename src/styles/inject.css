@@ -53,3 +53,7 @@ html.veloxtube-sidebar
 html.veloxtube-sidebar ytd-mini-guide-renderer ytd-mini-guide-entry-renderer[aria-label="Shorts"] {
   display: none !important;
 }
+
+ytd-guide-renderer #footer {
+  display: none !important;
+}
