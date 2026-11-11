@@ -1,6 +1,6 @@
 import { build, context } from "esbuild";
 import { copyFile, mkdir, readdir, rm } from "node:fs/promises";
-import { basename, join } from "node:path";
+import { basename, dirname, join } from "node:path";
 
 const watch = process.argv.includes("--watch");
 
@@ -14,6 +14,18 @@ if (!watch) {
 
 await mkdir("dist", { recursive: true });
 await copyFile("src/manifest.json", "dist/manifest.json");
+
+const htmlFiles = (await readdir("src", { recursive: true })).filter((file) =>
+  file.endsWith(".html"),
+);
+
+await Promise.all(
+  htmlFiles.map(async (file) => {
+    const target = join("dist", file);
+    await mkdir(dirname(target), { recursive: true });
+    await copyFile(join("src", file), target);
+  }),
+);
 
 const options = {
   entryPoints,

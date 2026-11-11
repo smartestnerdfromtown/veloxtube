@@ -12,8 +12,12 @@
       }
     }
   },
-  "permissions": ["activeTab", "scripting"],
+  "permissions": ["storage"],
   "host_permissions": ["*://*.youtube.com/*"],
+  "action": {
+    "default_title": "VeloxTube",
+    "default_popup": "popup/index.html"
+  },
   "content_scripts": [
     {
       "matches": ["*://*.youtube.com/*"],

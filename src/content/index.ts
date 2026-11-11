@@ -1,15 +1,23 @@
 import { initHomeShorts } from "./homeShorts";
 import { initSearchShorts } from "./searchShorts";
 
-const ROOT_CLASS = "veloxtube";
+const HOME_CLASS = "veloxtube-home";
+const SEARCH_CLASS = "veloxtube-search";
+const KEYS = ["homeShortsEnabled", "searchShortsEnabled"] as const;
 
+type Flags = { homeShortsEnabled: boolean; searchShortsEnabled: boolean };
+
+const DEFAULTS: Flags = { homeShortsEnabled: true, searchShortsEnabled: true };
+
+let flags: Flags = DEFAULTS;
 let scheduled = false;
 
 const apply = (): void => {
   scheduled = false;
-  document.documentElement.classList.add(ROOT_CLASS);
-  initHomeShorts();
-  initSearchShorts();
+  document.documentElement.classList.toggle(HOME_CLASS, flags.homeShortsEnabled);
+  document.documentElement.classList.toggle(SEARCH_CLASS, flags.searchShortsEnabled);
+  initHomeShorts(flags.homeShortsEnabled);
+  initSearchShorts(flags.searchShortsEnabled);
 };
 
 const schedule = (): void => {
@@ -24,4 +32,23 @@ const schedule = (): void => {
 document.addEventListener("yt-navigate-finish", schedule, { passive: true });
 document.addEventListener("yt-page-data-updated", schedule, { passive: true });
 
-schedule();
+browser.storage.onChanged.addListener((changes, area) => {
+  if (area !== "local") {
+    return;
+  }
+
+  for (const key of KEYS) {
+    const change = changes[key];
+
+    if (change) {
+      flags = { ...flags, [key]: change.newValue as boolean };
+    }
+  }
+
+  schedule();
+});
+
+void browser.storage.local.get([...KEYS]).then((stored) => {
+  flags = { ...DEFAULTS, ...(stored as Partial<Flags>) };
+  schedule();
+});

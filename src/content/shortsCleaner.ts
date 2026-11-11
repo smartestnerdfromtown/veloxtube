@@ -10,7 +10,7 @@ export const createShortsCleaner = ({
   matcher,
   subtree = false,
   pruneSection = false,
-}: CleanerOptions): (() => void) => {
+}: CleanerOptions): ((enabled: boolean) => void) => {
   const remove = (element: Element): void => {
     const richSection = element.closest("ytd-rich-section-renderer");
 
@@ -51,7 +51,14 @@ export const createShortsCleaner = ({
   let observer: MutationObserver | undefined;
   let target: Element | null = null;
 
-  return (): void => {
+  return (enabled: boolean): void => {
+    if (!enabled) {
+      observer?.disconnect();
+      observer = undefined;
+      target = null;
+      return;
+    }
+
     const root = document.querySelector(container);
 
     if (root === target) {
