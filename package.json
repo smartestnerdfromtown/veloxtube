@@ -8,15 +8,20 @@
     "node": ">=20"
   },
   "scripts": {
-    "build": "node scripts/build.mjs",
+    "build": "node scripts/build.mjs && web-ext build --source-dir=dist --artifacts-dir=web-ext-artifacts --overwrite-dest",
     "watch": "node scripts/build.mjs --watch",
-    "lint": "tsc --noEmit && web-ext lint --source-dir=dist",
-    "dev": "npm run build && web-ext run --source-dir=dist --browser-console --pref=nimbus.validation.enabled=false --pref=browser.search.suggest.enabled=false"
+    "lint": "eslint . && tsc --noEmit && web-ext lint --source-dir=dist",
+    "format": "prettier --write .",
+    "dev": "node scripts/build.mjs && node scripts/dev.mjs"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/webextension-polyfill": "^0.12.6",
     "esbuild": "^0.28.2",
-    "typescript": "^7.0.2",
+    "eslint": "^10.14.0",
+    "prettier": "^3.9.10",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.72.2",
     "web-ext": "^10.8.0"
   }
 }

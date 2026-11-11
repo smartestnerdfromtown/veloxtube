@@ -17,11 +17,11 @@
   "content_scripts": [
     {
       "matches": ["*://*.youtube.com/*"],
-      "js": ["content.js"],
+      "js": ["content/index.js"],
       "run_at": "document_start"
     }
   ],
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["background/index.js"]
   }
 }
