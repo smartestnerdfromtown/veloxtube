@@ -2,8 +2,9 @@ import { createShortsCleaner } from "./shortsCleaner";
 
 const FOOTER_CSS = "ytd-guide-renderer #footer { display: none !important; }";
 
+// #guide-content survives guide re-renders, so the observer outlives ytd-guide-renderer.
 const cleanFooter = createShortsCleaner({
-  container: "ytd-guide-renderer",
+  container: "#guide-content",
   matcher: "#footer",
   subtree: true,
 });
