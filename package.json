@@ -8,13 +8,15 @@
     "node": ">=20"
   },
   "scripts": {
-    "build": "esbuild src/content.ts --bundle --minify --target=firefox115 --outfile=dist/content.js && cp src/manifest.json src/veloxtube.css dist/",
-    "watch": "esbuild src/content.ts --bundle --target=firefox115 --outfile=dist/content.js --sourcemap --watch",
-    "lint": "web-ext lint --source-dir=dist",
-    "dev": "npm run build && web-ext run --source-dir=dist --browser-console"
+    "build": "node scripts/build.mjs",
+    "watch": "node scripts/build.mjs --watch",
+    "lint": "tsc --noEmit && web-ext lint --source-dir=dist",
+    "dev": "npm run build && web-ext run --source-dir=dist --browser-console --pref=nimbus.validation.enabled=false --pref=browser.search.suggest.enabled=false"
   },
   "devDependencies": {
+    "@types/webextension-polyfill": "^0.12.6",
     "esbuild": "^0.28.2",
+    "typescript": "^7.0.2",
     "web-ext": "^10.8.0"
   }
 }
