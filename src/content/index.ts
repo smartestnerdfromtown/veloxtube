@@ -1,5 +1,6 @@
 import { initHomeShorts } from "./homeShorts";
 import { initSearchShorts } from "./searchShorts";
+import { initSidebarShorts } from "./sidebarShorts";
 
 const HOME_CLASS = "veloxtube-home";
 const SEARCH_CLASS = "veloxtube-search";
@@ -18,6 +19,7 @@ const apply = (): void => {
   document.documentElement.classList.toggle(SEARCH_CLASS, flags.searchShortsEnabled);
   initHomeShorts(flags.homeShortsEnabled);
   initSearchShorts(flags.searchShortsEnabled);
+  initSidebarShorts();
 };
 
 const schedule = (): void => {

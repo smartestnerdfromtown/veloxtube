@@ -39,3 +39,10 @@ html.veloxtube-search ytd-search ytd-video-renderer:has(badge-shape[aria-label="
 html.veloxtube-search ytd-search yt-lockup-view-model:has(a[href^="/shorts/"]) {
   display: none !important;
 }
+
+ytd-guide-entry-renderer:has(a[title="Shorts"]),
+ytd-guide-entry-renderer:has(a[href^="/shorts"]),
+ytd-mini-guide-entry-renderer:has(a[href^="/shorts"]),
+ytd-mini-guide-entry-renderer[aria-label="Shorts"] {
+  display: none !important;
+}
