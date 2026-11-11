@@ -1,11 +1,19 @@
 const MASTHEAD = "ytd-masthead";
-const LOGO_SELECTOR =
-  "ytd-masthead #logo, ytd-masthead ytd-topbar-logo-renderer, ytd-masthead #masthead-logo";
+const GUIDE_WRAPPER = "#guide-wrapper";
+
+const LOGO_SELECTOR = [
+  "ytd-masthead ytd-topbar-logo-renderer",
+  "ytd-masthead #logo",
+  "ytd-masthead #masthead-logo",
+  "#guide-content #header ytd-topbar-logo-renderer",
+  "#guide-content #header #logo",
+].join(",\n");
+
 const LOGO_CSS = `${LOGO_SELECTOR} {\n  display: none !important;\n}`;
 
 let styleElement: HTMLStyleElement | null = null;
 let observer: MutationObserver | null = null;
-let observedRoot: Element | null = null;
+let observedRoots: Element[] = [];
 let scheduled = false;
 let active = false;
 
@@ -49,7 +57,7 @@ const setStyles = (enabled: boolean): void => {
 const disconnectObserver = (): void => {
   observer?.disconnect();
   observer = null;
-  observedRoot = null;
+  observedRoots = [];
 };
 
 export const initTopLogo = (enabled: boolean): void => {
@@ -61,20 +69,30 @@ export const initTopLogo = (enabled: boolean): void => {
     return;
   }
 
-  const root = document.querySelector(MASTHEAD);
+  const roots = [MASTHEAD, GUIDE_WRAPPER]
+    .map((selector) => document.querySelector(selector))
+    .filter((root): root is Element => root !== null);
 
-  if (root === observedRoot && root?.isConnected) {
+  const unchanged =
+    roots.length === observedRoots.length &&
+    roots.every((root, index) => root === observedRoots[index] && root.isConnected);
+
+  if (unchanged) {
     return;
   }
 
   disconnectObserver();
 
-  if (!root) {
+  if (roots.length === 0) {
     return;
   }
 
   observer = new MutationObserver(scheduleCleanup);
-  observedRoot = root;
-  observer.observe(root, { childList: true, subtree: true });
+  observedRoots = roots;
+
+  for (const root of roots) {
+    observer.observe(root, { childList: true, subtree: true });
+  }
+
   scheduleCleanup();
 };
