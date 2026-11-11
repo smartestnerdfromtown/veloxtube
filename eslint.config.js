@@ -15,7 +15,7 @@ export default tseslint.config(
         browser: "readonly",
         console: "readonly",
         document: "readonly",
-        requestAnimationFrame: "readonly",
+        queueMicrotask: "readonly",
         window: "readonly",
       },
     },

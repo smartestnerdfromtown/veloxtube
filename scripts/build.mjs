@@ -1,11 +1,11 @@
 import { build, context } from "esbuild";
 import { copyFile, mkdir, readdir, rm } from "node:fs/promises";
-import { join } from "node:path";
+import { basename, join } from "node:path";
 
 const watch = process.argv.includes("--watch");
 
 const entryPoints = (await readdir("src", { recursive: true }))
-  .filter((file) => file.endsWith(".ts") && !file.endsWith(".d.ts"))
+  .filter((file) => basename(file) === "index.ts" || file.endsWith(".css"))
   .map((file) => join("src", file));
 
 if (!watch) {

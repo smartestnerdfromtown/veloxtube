@@ -1,0 +1,11 @@
+ytd-browse[page-subtype="home"] ytd-rich-section-renderer:has(ytd-rich-shelf-renderer[is-shorts]),
+ytd-browse[page-subtype="home"] ytd-rich-section-renderer:has(ytd-reel-shelf-renderer),
+ytd-browse[page-subtype="home"] ytd-rich-section-renderer:has(ytm-shorts-lockup-view-model),
+ytd-browse[page-subtype="home"] ytd-rich-shelf-renderer[is-shorts],
+ytd-browse[page-subtype="home"] ytd-rich-shelf-renderer:has(ytm-shorts-lockup-view-model),
+ytd-browse[page-subtype="home"] ytd-reel-shelf-renderer,
+ytd-browse[page-subtype="home"] ytd-rich-item-renderer:has(ytm-shorts-lockup-view-model),
+ytd-browse[page-subtype="home"] ytd-rich-item-renderer:has(a[href^="/shorts/"]),
+ytd-browse[page-subtype="home"] ytd-reel-item-renderer {
+  display: none !important;
+}

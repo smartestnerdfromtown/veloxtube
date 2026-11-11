@@ -1,3 +1,5 @@
+import { initHomeShorts } from "./homeShorts";
+
 const ROOT_CLASS = "veloxtube";
 
 let scheduled = false;
@@ -5,6 +7,7 @@ let scheduled = false;
 const apply = (): void => {
   scheduled = false;
   document.documentElement.classList.add(ROOT_CLASS);
+  initHomeShorts();
 };
 
 const schedule = (): void => {
@@ -13,7 +16,7 @@ const schedule = (): void => {
   }
 
   scheduled = true;
-  requestAnimationFrame(apply);
+  queueMicrotask(apply);
 };
 
 document.addEventListener("yt-navigate-finish", schedule, { passive: true });

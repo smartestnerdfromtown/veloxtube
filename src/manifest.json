@@ -18,6 +18,7 @@
     {
       "matches": ["*://*.youtube.com/*"],
       "js": ["content/index.js"],
+      "css": ["styles/inject.css"],
       "run_at": "document_start"
     }
   ],
