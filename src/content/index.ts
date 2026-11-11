@@ -6,18 +6,25 @@ import { initSidebarFooter } from "./sidebarFooter";
 const HOME_CLASS = "veloxtube-home";
 const SEARCH_CLASS = "veloxtube-search";
 const SIDEBAR_CLASS = "veloxtube-sidebar";
-const KEYS = ["homeShortsEnabled", "searchShortsEnabled", "sidebarShortsEnabled"] as const;
+const KEYS = [
+  "homeShortsEnabled",
+  "searchShortsEnabled",
+  "sidebarShortsEnabled",
+  "sidebarFooterEnabled",
+] as const;
 
 type Flags = {
   homeShortsEnabled: boolean;
   searchShortsEnabled: boolean;
   sidebarShortsEnabled: boolean;
+  sidebarFooterEnabled: boolean;
 };
 
 const DEFAULTS: Flags = {
   homeShortsEnabled: true,
   searchShortsEnabled: true,
   sidebarShortsEnabled: true,
+  sidebarFooterEnabled: true,
 };
 
 let flags: Flags = DEFAULTS;
@@ -31,7 +38,7 @@ const apply = (): void => {
   initHomeShorts(flags.homeShortsEnabled);
   initSearchShorts(flags.searchShortsEnabled);
   initSidebarShorts(flags.sidebarShortsEnabled);
-  initSidebarFooter();
+  initSidebarFooter(flags.sidebarFooterEnabled);
 };
 
 const schedule = (): void => {

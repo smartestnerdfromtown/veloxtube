@@ -11,7 +11,13 @@ const cleanFooter = createShortsCleaner({
 
 let styleElement: HTMLStyleElement | null = null;
 
-const injectFooterStyles = (): void => {
+const setFooterStyles = (enabled: boolean): void => {
+  if (!enabled) {
+    styleElement?.remove();
+    styleElement = null;
+    return;
+  }
+
   if (styleElement?.isConnected) {
     return;
   }
@@ -21,7 +27,7 @@ const injectFooterStyles = (): void => {
   (document.head ?? document.documentElement).append(styleElement);
 };
 
-export const initSidebarFooter = (): void => {
-  injectFooterStyles();
-  cleanFooter(true);
+export const initSidebarFooter = (enabled: boolean): void => {
+  setFooterStyles(enabled);
+  cleanFooter(enabled);
 };
