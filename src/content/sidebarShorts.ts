@@ -15,7 +15,7 @@ const cleanMiniGuide = createShortsCleaner({
   subtree: true,
 });
 
-export const initSidebarShorts = (): void => {
-  cleanGuide(true);
-  cleanMiniGuide(true);
+export const initSidebarShorts = (enabled: boolean): void => {
+  cleanGuide(enabled);
+  cleanMiniGuide(enabled);
 };

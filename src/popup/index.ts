@@ -1,10 +1,11 @@
-const KEYS = ["homeShortsEnabled", "searchShortsEnabled"] as const;
+const KEYS = ["homeShortsEnabled", "searchShortsEnabled", "sidebarShortsEnabled"] as const;
 
 type Key = (typeof KEYS)[number];
 
 const DEFAULTS: Record<Key, boolean> = {
   homeShortsEnabled: true,
   searchShortsEnabled: true,
+  sidebarShortsEnabled: true,
 };
 
 const getInput = (key: Key): HTMLInputElement => {

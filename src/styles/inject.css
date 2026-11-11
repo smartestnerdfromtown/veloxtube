@@ -40,9 +40,9 @@ html.veloxtube-search ytd-search yt-lockup-view-model:has(a[href^="/shorts/"]) {
   display: none !important;
 }
 
-ytd-guide-entry-renderer:has(a[title="Shorts"]),
-ytd-guide-entry-renderer:has(a[href^="/shorts"]),
-ytd-mini-guide-entry-renderer:has(a[href^="/shorts"]),
-ytd-mini-guide-entry-renderer[aria-label="Shorts"] {
+html.veloxtube-sidebar ytd-guide-entry-renderer:has(a[title="Shorts"]),
+html.veloxtube-sidebar ytd-guide-entry-renderer:has(a[href^="/shorts"]),
+html.veloxtube-sidebar ytd-mini-guide-entry-renderer:has(a[href^="/shorts"]),
+html.veloxtube-sidebar ytd-mini-guide-entry-renderer[aria-label="Shorts"] {
   display: none !important;
 }

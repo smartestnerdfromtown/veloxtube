@@ -4,11 +4,20 @@ import { initSidebarShorts } from "./sidebarShorts";
 
 const HOME_CLASS = "veloxtube-home";
 const SEARCH_CLASS = "veloxtube-search";
-const KEYS = ["homeShortsEnabled", "searchShortsEnabled"] as const;
+const SIDEBAR_CLASS = "veloxtube-sidebar";
+const KEYS = ["homeShortsEnabled", "searchShortsEnabled", "sidebarShortsEnabled"] as const;
 
-type Flags = { homeShortsEnabled: boolean; searchShortsEnabled: boolean };
+type Flags = {
+  homeShortsEnabled: boolean;
+  searchShortsEnabled: boolean;
+  sidebarShortsEnabled: boolean;
+};
 
-const DEFAULTS: Flags = { homeShortsEnabled: true, searchShortsEnabled: true };
+const DEFAULTS: Flags = {
+  homeShortsEnabled: true,
+  searchShortsEnabled: true,
+  sidebarShortsEnabled: true,
+};
 
 let flags: Flags = DEFAULTS;
 let scheduled = false;
@@ -17,9 +26,10 @@ const apply = (): void => {
   scheduled = false;
   document.documentElement.classList.toggle(HOME_CLASS, flags.homeShortsEnabled);
   document.documentElement.classList.toggle(SEARCH_CLASS, flags.searchShortsEnabled);
+  document.documentElement.classList.toggle(SIDEBAR_CLASS, flags.sidebarShortsEnabled);
   initHomeShorts(flags.homeShortsEnabled);
   initSearchShorts(flags.searchShortsEnabled);
-  initSidebarShorts();
+  initSidebarShorts(flags.sidebarShortsEnabled);
 };
 
 const schedule = (): void => {
