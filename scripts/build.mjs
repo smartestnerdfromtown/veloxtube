@@ -15,12 +15,12 @@ if (!watch) {
 await mkdir("dist", { recursive: true });
 await copyFile("src/manifest.json", "dist/manifest.json");
 
-const htmlFiles = (await readdir("src", { recursive: true })).filter((file) =>
-  file.endsWith(".html"),
+const assetFiles = (await readdir("src", { recursive: true })).filter(
+  (file) => file.endsWith(".html") || file.endsWith(".svg"),
 );
 
 await Promise.all(
-  htmlFiles.map(async (file) => {
+  assetFiles.map(async (file) => {
     const target = join("dist", file);
     await mkdir(dirname(target), { recursive: true });
     await copyFile(join("src", file), target);
