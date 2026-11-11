@@ -1,5 +1,4 @@
-const MASTHEAD = "ytd-masthead";
-const GUIDE_WRAPPER = "#guide-wrapper";
+const ROOTS = ["ytd-masthead", "#guide-content #header"];
 
 const LOGO_SELECTOR = [
   "ytd-masthead ytd-topbar-logo-renderer",
@@ -69,9 +68,9 @@ export const initTopLogo = (enabled: boolean): void => {
     return;
   }
 
-  const roots = [MASTHEAD, GUIDE_WRAPPER]
-    .map((selector) => document.querySelector(selector))
-    .filter((root): root is Element => root !== null);
+  const roots = ROOTS.map((selector) => document.querySelector(selector)).filter(
+    (root): root is Element => root !== null,
+  );
 
   const unchanged =
     roots.length === observedRoots.length &&
