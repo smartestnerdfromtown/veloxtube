@@ -63,7 +63,7 @@ export const createShortsCleaner = ({
 
     const root = document.querySelector(container);
 
-    if (root === target && root?.isConnected) {
+    if (root === target && (!root || root.isConnected)) {
       return;
     }
 

@@ -15,7 +15,22 @@ const cleanMiniGuide = createShortsCleaner({
   subtree: true,
 });
 
-export const initSidebarShorts = (enabled: boolean): void => {
+let enabled = true;
+let scheduled = false;
+
+const run = (): void => {
+  scheduled = false;
   cleanGuide(enabled);
   cleanMiniGuide(enabled);
+};
+
+export const initSidebarShorts = (value: boolean): void => {
+  enabled = value;
+
+  if (scheduled) {
+    return;
+  }
+
+  scheduled = true;
+  queueMicrotask(run);
 };
