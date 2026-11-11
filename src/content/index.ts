@@ -12,6 +12,7 @@ const KEYS = [
   "searchShortsEnabled",
   "sidebarShortsEnabled",
   "sidebarFooterEnabled",
+  "topLogoEnabled",
 ] as const;
 
 type Flags = {
@@ -19,6 +20,7 @@ type Flags = {
   searchShortsEnabled: boolean;
   sidebarShortsEnabled: boolean;
   sidebarFooterEnabled: boolean;
+  topLogoEnabled: boolean;
 };
 
 const DEFAULTS: Flags = {
@@ -26,6 +28,7 @@ const DEFAULTS: Flags = {
   searchShortsEnabled: true,
   sidebarShortsEnabled: true,
   sidebarFooterEnabled: true,
+  topLogoEnabled: true,
 };
 
 let flags: Flags = DEFAULTS;
@@ -40,7 +43,7 @@ const apply = (): void => {
   initSearchShorts(flags.searchShortsEnabled);
   initSidebarShorts(flags.sidebarShortsEnabled);
   initSidebarFooter(flags.sidebarFooterEnabled);
-  initTopLogo();
+  initTopLogo(flags.topLogoEnabled);
 };
 
 const schedule = (): void => {
