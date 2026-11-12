@@ -186,10 +186,6 @@ const disconnectObserver = (): void => {
     pendingTargets.clear();
 };
 
-const findRoots = (): Element[] => {
-    return [getGuideRoot(), getMiniGuideRoot()].filter((root): root is Element => root !== null);
-};
-
 //// It works, just do not touch it
 const observeRoots = (): void => {
     const guide = getGuideRoot();
