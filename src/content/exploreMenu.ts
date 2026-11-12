@@ -1,46 +1,59 @@
-// Platform paths remain unique to Explore; channel links can also appear in subscriptions.
-const EXPLORE_MATCH = `#sections > ytd-guide-section-renderer:has(
-  a[href="/gaming"],
-  a[href^="/podcasts"],
-  a[href^="/feed/podcasts"],
-  a[href="/playables"],
-  a[href^="/feed/trending"],
-  a[href^="/feed/storefront"],
-  a[href^="/paid_memberships"],
-  a[href="/memberships"]
-)`;
+const TARGET_TITLE = "Explore";
+const SECTION_CLASS = "veloxtube-explore-menu";
+const SECTION_SELECTOR = "ytd-guide-renderer #sections > ytd-guide-section-renderer";
+const MINI_ENTRY_SELECTOR = "ytd-mini-guide-renderer ytd-mini-guide-entry-renderer";
 
-const EXPLORE_CSS = `ytd-guide-renderer ${EXPLORE_MATCH} {
+// Platform paths remain unique to Explore; channel links can also appear in subscriptions.
+const EXPLORE_LINKS = [
+  'a[href="/gaming"]',
+  'a[href^="/podcasts"]',
+  'a[href^="/feed/podcasts"]',
+  'a[href^="/feed/trending"]',
+  'a[href^="/feed/explore"]',
+  'a[href="/playables"]',
+  'a[href^="/feed/storefront"]',
+  'a[href^="/paid_memberships"]',
+  'a[href="/memberships"]',
+].join(",\n");
+
+const EXPLORE_SECTION = `${SECTION_SELECTOR}:has(${EXPLORE_LINKS})`;
+const EXPLORE_MARKED = `${SECTION_SELECTOR}.${SECTION_CLASS}`;
+const EXPLORE_ENTRY = `${MINI_ENTRY_SELECTOR}:has(${EXPLORE_LINKS})`;
+
+const EXPLORE_CSS = `${EXPLORE_SECTION},
+${EXPLORE_MARKED},
+${EXPLORE_ENTRY} {
   display: none !important;
 }`;
 
-// #guide survives full, collapsed, and mini guide layouts; #guide-wrapper is the fallback.
-const GUIDE_ROOT = "#guide, #guide-wrapper";
-
 let styleElement: HTMLStyleElement | null = null;
 let observer: MutationObserver | null = null;
-let guideRoot: Element | null = null;
-let guideRenderer: Element | null = null;
+let observedRoots: Element[] = [];
 let scheduled = false;
 let active = false;
 
-const detachSections = (): void => {
+const isExploreSection = (section: Element): boolean => {
+  const title = section.querySelector("#guide-section-title")?.textContent?.trim();
+
+  return title === TARGET_TITLE || section.querySelector(EXPLORE_LINKS) !== null;
+};
+
+const detachExplore = (): void => {
   scheduled = false;
 
-  if (!active || !guideRoot?.isConnected) {
+  if (!active) {
     return;
   }
 
-  if (!guideRenderer?.isConnected || !guideRoot.contains(guideRenderer)) {
-    guideRenderer = guideRoot.querySelector("ytd-guide-renderer");
+  for (const section of document.querySelectorAll(SECTION_SELECTOR)) {
+    if (isExploreSection(section)) {
+      section.classList.add(SECTION_CLASS);
+      section.remove();
+    }
   }
 
-  if (!guideRenderer) {
-    return;
-  }
-
-  for (const section of guideRenderer.querySelectorAll(EXPLORE_MATCH)) {
-    section.remove();
+  for (const entry of document.querySelectorAll(EXPLORE_ENTRY)) {
+    entry.remove();
   }
 };
 
@@ -50,7 +63,7 @@ const scheduleDetach = (): void => {
   }
 
   scheduled = true;
-  queueMicrotask(detachSections);
+  queueMicrotask(detachExplore);
 };
 
 const onMutations = (records: MutationRecord[]): void => {
@@ -79,8 +92,42 @@ const setStyles = (): void => {
 const disconnectObserver = (): void => {
   observer?.disconnect();
   observer = null;
-  guideRoot = null;
-  guideRenderer = null;
+  observedRoots = [];
+};
+
+const findRoots = (): Element[] => {
+  // #guide survives full, collapsed, and mini layouts; #guide-wrapper is the fallback.
+  const guide = document.querySelector("#guide") ?? document.querySelector("#guide-wrapper");
+  const miniGuide = document.querySelector("ytd-mini-guide-renderer");
+
+  return [guide, miniGuide].filter((root): root is Element => root !== null);
+};
+
+const observeRoots = (): void => {
+  const roots = findRoots();
+
+  const unchanged =
+    roots.length === observedRoots.length &&
+    roots.every((root, index) => root === observedRoots[index] && root.isConnected);
+
+  if (unchanged) {
+    return;
+  }
+
+  disconnectObserver();
+
+  if (roots.length === 0) {
+    return;
+  }
+
+  observer = new MutationObserver(onMutations);
+  observedRoots = roots;
+
+  for (const root of roots) {
+    observer.observe(root, { childList: true, subtree: true });
+  }
+
+  detachExplore();
 };
 
 const teardown = (): void => {
@@ -98,21 +145,5 @@ export const initExploreMenu = (enabled: boolean): void => {
 
   active = true;
   setStyles();
-
-  const root = document.querySelector(GUIDE_ROOT);
-
-  if (root === guideRoot && root?.isConnected) {
-    return;
-  }
-
-  disconnectObserver();
-  guideRoot = root;
-
-  if (!root) {
-    return;
-  }
-
-  observer = new MutationObserver(onMutations);
-  observer.observe(root, { childList: true, subtree: true });
-  detachSections();
+  observeRoots();
 };

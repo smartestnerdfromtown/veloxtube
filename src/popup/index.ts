@@ -6,6 +6,7 @@ const KEYS = [
   "topLogoEnabled",
   "topicBarEnabled",
   "moreFromYouTubeEnabled",
+  "exploreMenuEnabled",
   "inFeedAdsEnabled",
 ] as const;
 
@@ -19,6 +20,7 @@ const DEFAULTS: Record<Key, boolean> = {
   topLogoEnabled: true,
   topicBarEnabled: true,
   moreFromYouTubeEnabled: true,
+  exploreMenuEnabled: true,
   inFeedAdsEnabled: true,
 };
 
