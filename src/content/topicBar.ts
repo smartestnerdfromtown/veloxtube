@@ -1,3 +1,5 @@
+const ROOTS = ['ytd-browse[page-subtype="home"] #header', "ytd-watch-flexy #related"];
+
 const CHIP_SELECTORS = [
   'ytd-browse[page-subtype="home"] ytd-feed-filter-chip-bar-renderer',
   'ytd-browse[page-subtype="home"] #header yt-chip-cloud-renderer',
@@ -9,8 +11,28 @@ const CHIP_SELECTORS = [
 const CHIP_CSS = `${CHIP_SELECTORS} {\n  display: none !important;\n}`;
 
 let styleElement: HTMLStyleElement | null = null;
+let observer: MutationObserver | null = null;
+let observedRoots: Element[] = [];
+let scheduled = false;
 
-export const initTopicBar = (): void => {
+const detachChips = (): void => {
+  scheduled = false;
+
+  for (const chips of document.querySelectorAll(CHIP_SELECTORS)) {
+    chips.remove();
+  }
+};
+
+const scheduleCleanup = (): void => {
+  if (scheduled) {
+    return;
+  }
+
+  scheduled = true;
+  queueMicrotask(detachChips);
+};
+
+const setStyles = (): void => {
   if (styleElement?.isConnected) {
     return;
   }
@@ -18,4 +40,41 @@ export const initTopicBar = (): void => {
   styleElement = document.createElement("style");
   styleElement.textContent = CHIP_CSS;
   (document.head ?? document.documentElement).append(styleElement);
+};
+
+const disconnectObserver = (): void => {
+  observer?.disconnect();
+  observer = null;
+  observedRoots = [];
+};
+
+export const initTopicBar = (): void => {
+  setStyles();
+
+  const roots = ROOTS.map((selector) => document.querySelector(selector)).filter(
+    (root): root is Element => root !== null,
+  );
+
+  const unchanged =
+    roots.length === observedRoots.length &&
+    roots.every((root, index) => root === observedRoots[index] && root.isConnected);
+
+  if (unchanged) {
+    return;
+  }
+
+  disconnectObserver();
+
+  if (roots.length === 0) {
+    return;
+  }
+
+  observer = new MutationObserver(scheduleCleanup);
+  observedRoots = roots;
+
+  for (const root of roots) {
+    observer.observe(root, { childList: true, subtree: true });
+  }
+
+  scheduleCleanup();
 };

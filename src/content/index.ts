@@ -47,6 +47,7 @@ const apply = (): void => {
   initSidebarShorts(flags.sidebarShortsEnabled);
   initSidebarFooter(flags.sidebarFooterEnabled);
   initTopLogo(flags.topLogoEnabled);
+  initTopicBar();
 };
 
 const schedule = (): void => {
