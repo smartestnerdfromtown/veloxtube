@@ -32,6 +32,7 @@ ${EXPLORE_ENTRY} {
 let styleElement: HTMLStyleElement | null = null;
 let observer: MutationObserver | null = null;
 let observedRoots: Element[] = [];
+let guideRoot: Element | null = null;
 let sectionsRoot: Element | null = null;
 let miniGuideRoot: Element | null = null;
 const pendingTargets = new Set<Element>();
@@ -53,12 +54,21 @@ const detachSection = (section: Element): void => {
   section.remove();
 };
 
+const getGuideRoot = (): Element | null => {
+  if (guideRoot?.isConnected) {
+    return guideRoot;
+  }
+
+  guideRoot = document.querySelector("#guide") ?? document.querySelector("#guide-wrapper");
+  return guideRoot;
+};
+
 const getSectionsRoot = (): Element | null => {
   if (sectionsRoot?.isConnected) {
     return sectionsRoot;
   }
 
-  sectionsRoot = document.querySelector(SECTIONS_ROOT);
+  sectionsRoot = getGuideRoot()?.querySelector(SECTIONS_ROOT) ?? null;
   return sectionsRoot;
 };
 
@@ -175,21 +185,19 @@ const setStyles = (): void => {
   (document.head ?? document.documentElement).append(styleElement);
 };
 
+// Release every strong reference so detached sidebar nodes stay collectable.
 const disconnectObserver = (): void => {
   observer?.disconnect();
   observer = null;
   observedRoots = [];
+  guideRoot = null;
   sectionsRoot = null;
   miniGuideRoot = null;
   pendingTargets.clear();
 };
 
 const findRoots = (): Element[] => {
-  // #guide survives full, collapsed, and mini layouts; #guide-wrapper is the fallback.
-  const guide = document.querySelector("#guide") ?? document.querySelector("#guide-wrapper");
-  const miniGuide = document.querySelector(MINI_GUIDE);
-
-  return [guide, miniGuide].filter((root): root is Element => root !== null);
+  return [getGuideRoot(), getMiniGuideRoot()].filter((root): root is Element => root !== null);
 };
 
 const observeRoots = (): void => {
