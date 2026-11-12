@@ -97,14 +97,17 @@ const detachExplore = (): void => {
 };
 
 const purge = (node: Element): void => {
-    const entry = node.closest(EXPLORE_ENTRY);
+    const entry = node.closest(MINI_ENTRY_SELECTOR);
 
     if (entry) {
-        entry.remove();
+        if (entry.matches(EXPLORE_ENTRY)) {
+            entry.remove();
+        }
+
         return;
     }
 
-    const section = node.closest(SECTION_SELECTOR);
+    const section = node.closest(GUIDE_SECTION);
 
     if (section) {
         if (isExploreSection(section)) {
