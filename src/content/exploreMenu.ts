@@ -1,4 +1,3 @@
-const TARGET_TITLE = "Explore";
 const SECTION_CLASS = "veloxtube-explore-menu";
 const SECTIONS_ROOT = "ytd-guide-renderer #sections";
 const GUIDE_SECTION = "ytd-guide-section-renderer";
@@ -16,10 +15,8 @@ const EXPLORE_LINK_SELECTOR = [
 
 const EXPLORE_SECTION = `${SECTION_SELECTOR}:has(${EXPLORE_LINK_SELECTOR})`;
 const EXPLORE_ENTRY = `${MINI_ENTRY_SELECTOR}:has(${EXPLORE_LINK_SELECTOR})`;
-const EXPLORE_MARKED = `${SECTION_SELECTOR}.${SECTION_CLASS}`;
 
 const EXPLORE_CSS = `${EXPLORE_SECTION},
-${EXPLORE_MARKED},
 ${EXPLORE_ENTRY} {
   display: none !important;
 }`;
