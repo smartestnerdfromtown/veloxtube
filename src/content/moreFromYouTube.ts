@@ -1,7 +1,7 @@
 const TARGET_TITLE = "More from YouTube";
 const SECTION_CLASS = "veloxtube-more-from-youtube";
-const GUIDE_SECTION_SELECTOR = "ytd-guide-renderer ytd-guide-section-renderer";
-const TARGET_SELECTOR = `${GUIDE_SECTION_SELECTOR}.${SECTION_CLASS}`;
+const SECTION_SELECTOR = "ytd-guide-section-renderer";
+const TARGET_SELECTOR = `ytd-guide-renderer ${SECTION_SELECTOR}.${SECTION_CLASS}`;
 
 const SECTION_CSS = `${TARGET_SELECTOR} {
   display: none !important;
@@ -13,18 +13,9 @@ const GUIDE_ROOT = "#guide, #guide-wrapper";
 let styleElement: HTMLStyleElement | null = null;
 let observer: MutationObserver | null = null;
 let guideRoot: Element | null = null;
+let guideRenderer: Element | null = null;
 let scheduled = false;
 let active = false;
-
-const markTargetSections = (root: Element): void => {
-  for (const section of root.querySelectorAll(GUIDE_SECTION_SELECTOR)) {
-    const title = section.querySelector("#guide-section-title")?.textContent?.trim();
-
-    if (title === TARGET_TITLE) {
-      section.classList.add(SECTION_CLASS);
-    }
-  }
-};
 
 const detachSections = (): void => {
   scheduled = false;
@@ -33,10 +24,21 @@ const detachSections = (): void => {
     return;
   }
 
-  markTargetSections(guideRoot);
+  if (!guideRenderer?.isConnected || !guideRoot.contains(guideRenderer)) {
+    guideRenderer = guideRoot.querySelector("ytd-guide-renderer");
+  }
 
-  for (const section of guideRoot.querySelectorAll(TARGET_SELECTOR)) {
-    section.remove();
+  if (!guideRenderer) {
+    return;
+  }
+
+  for (const section of guideRenderer.querySelectorAll(SECTION_SELECTOR)) {
+    const title = section.querySelector("#guide-section-title")?.textContent?.trim();
+
+    if (title === TARGET_TITLE) {
+      section.classList.add(SECTION_CLASS);
+      section.remove();
+    }
   }
 };
 
@@ -82,6 +84,7 @@ const disconnectObserver = (): void => {
   observer?.disconnect();
   observer = null;
   guideRoot = null;
+  guideRenderer = null;
 };
 
 export const initMoreFromYouTube = (enabled: boolean): void => {
