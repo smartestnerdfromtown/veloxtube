@@ -34,8 +34,14 @@ export const createShortsCleaner = ({
     };
 
     const purge = (root: Element): void => {
-        if (root.matches(matcher)) {
-            remove(root);
+        const match = root.closest(matcher);
+
+        if (match) {
+            remove(match);
+            return;
+        }
+
+        if (!root.firstElementChild) {
             return;
         }
 
@@ -53,11 +59,6 @@ export const createShortsCleaner = ({
 
     const flush = (): void => {
         scheduled = false;
-
-        if (!observer) {
-            pending.clear();
-            return;
-        }
 
         const targets = [...pending];
         const outermost = targets.filter(
@@ -101,11 +102,11 @@ export const createShortsCleaner = ({
             return;
         }
 
-        const root = document.querySelector(container);
-
-        if (root === target && (!root || root.isConnected)) {
+        if (target?.isConnected && target.matches(container)) {
             return;
         }
+
+        const root = document.querySelector(container);
 
         observer?.disconnect();
         target = root;
