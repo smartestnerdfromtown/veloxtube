@@ -14,9 +14,14 @@ let styleElement: HTMLStyleElement | null = null;
 let observer: MutationObserver | null = null;
 let observedRoots: Element[] = [];
 let scheduled = false;
+let active = false;
 
 const detachChips = (): void => {
   scheduled = false;
+
+  if (!active) {
+    return;
+  }
 
   for (const chips of document.querySelectorAll(CHIP_SELECTORS)) {
     chips.remove();
@@ -32,7 +37,13 @@ const scheduleCleanup = (): void => {
   queueMicrotask(detachChips);
 };
 
-const setStyles = (): void => {
+const setStyles = (enabled: boolean): void => {
+  if (!enabled) {
+    styleElement?.remove();
+    styleElement = null;
+    return;
+  }
+
   if (styleElement?.isConnected) {
     return;
   }
@@ -48,8 +59,14 @@ const disconnectObserver = (): void => {
   observedRoots = [];
 };
 
-export const initTopicBar = (): void => {
-  setStyles();
+export const initTopicBar = (enabled: boolean): void => {
+  active = enabled;
+  setStyles(enabled);
+
+  if (!enabled) {
+    disconnectObserver();
+    return;
+  }
 
   const roots = ROOTS.map((selector) => document.querySelector(selector)).filter(
     (root): root is Element => root !== null,
