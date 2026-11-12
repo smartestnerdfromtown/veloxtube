@@ -19,6 +19,7 @@ const KEYS = [
   "topLogoEnabled",
   "topicBarEnabled",
   "moreFromYouTubeEnabled",
+  "exploreMenuEnabled",
   "inFeedAdsEnabled",
 ] as const;
 
@@ -30,6 +31,7 @@ type Flags = {
   topLogoEnabled: boolean;
   topicBarEnabled: boolean;
   moreFromYouTubeEnabled: boolean;
+  exploreMenuEnabled: boolean;
   inFeedAdsEnabled: boolean;
 };
 
@@ -41,6 +43,7 @@ const DEFAULTS: Flags = {
   topLogoEnabled: true,
   topicBarEnabled: true,
   moreFromYouTubeEnabled: true,
+  exploreMenuEnabled: true,
   inFeedAdsEnabled: true,
 };
 
@@ -51,7 +54,7 @@ const apply = (): void => {
   scheduled = false;
   initInFeedAds(flags.inFeedAdsEnabled);
   initMoreFromYouTube(flags.moreFromYouTubeEnabled);
-  initExploreMenu();
+  initExploreMenu(flags.exploreMenuEnabled);
   document.documentElement.classList.toggle(HOME_CLASS, flags.homeShortsEnabled);
   document.documentElement.classList.toggle(SEARCH_CLASS, flags.searchShortsEnabled);
   document.documentElement.classList.toggle(SIDEBAR_CLASS, flags.sidebarShortsEnabled);
