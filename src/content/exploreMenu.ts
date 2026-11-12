@@ -1,7 +1,10 @@
 const TARGET_TITLE = "Explore";
 const SECTION_CLASS = "veloxtube-explore-menu";
-const SECTION_SELECTOR = "ytd-guide-renderer #sections > ytd-guide-section-renderer";
-const MINI_ENTRY_SELECTOR = "ytd-mini-guide-renderer ytd-mini-guide-entry-renderer";
+const SECTIONS_ROOT = "ytd-guide-renderer #sections";
+const GUIDE_SECTION = "ytd-guide-section-renderer";
+const SECTION_SELECTOR = `${SECTIONS_ROOT} > ${GUIDE_SECTION}`;
+const MINI_GUIDE = "ytd-mini-guide-renderer";
+const MINI_ENTRY_SELECTOR = `${MINI_GUIDE} #items > ytd-mini-guide-entry-renderer`;
 
 // Platform paths remain unique to Explore; channel links can also appear in subscriptions.
 const EXPLORE_LINKS = [
@@ -29,41 +32,118 @@ ${EXPLORE_ENTRY} {
 let styleElement: HTMLStyleElement | null = null;
 let observer: MutationObserver | null = null;
 let observedRoots: Element[] = [];
+let sectionsRoot: Element | null = null;
+let miniGuideRoot: Element | null = null;
+const pendingTargets = new Set<Element>();
 let scheduled = false;
 let active = false;
 
 const isExploreSection = (section: Element): boolean => {
   const title = section.querySelector("#guide-section-title")?.textContent?.trim();
 
-  return title === TARGET_TITLE || section.querySelector(EXPLORE_LINKS) !== null;
+  return (
+    section.classList.contains(SECTION_CLASS) ||
+    title === TARGET_TITLE ||
+    section.querySelector(EXPLORE_LINKS) !== null
+  );
 };
 
-const detachExplore = (): void => {
-  scheduled = false;
+const detachSection = (section: Element): void => {
+  section.classList.add(SECTION_CLASS);
+  section.remove();
+};
 
-  if (!active) {
-    return;
+const getSectionsRoot = (): Element | null => {
+  if (sectionsRoot?.isConnected) {
+    return sectionsRoot;
   }
 
-  for (const section of document.querySelectorAll(SECTION_SELECTOR)) {
-    if (isExploreSection(section)) {
-      section.classList.add(SECTION_CLASS);
-      section.remove();
+  sectionsRoot = document.querySelector(SECTIONS_ROOT);
+  return sectionsRoot;
+};
+
+const getMiniGuideRoot = (): Element | null => {
+  if (miniGuideRoot?.isConnected) {
+    return miniGuideRoot;
+  }
+
+  miniGuideRoot = document.querySelector(MINI_GUIDE);
+  return miniGuideRoot;
+};
+
+// Initial and navigation sweeps stay scoped to the cached sidebar containers.
+const detachExplore = (): void => {
+  const sections = getSectionsRoot();
+
+  if (sections) {
+    for (const section of sections.querySelectorAll(`:scope > ${GUIDE_SECTION}`)) {
+      if (isExploreSection(section)) {
+        detachSection(section);
+      }
     }
   }
 
-  for (const entry of document.querySelectorAll(EXPLORE_ENTRY)) {
-    entry.remove();
+  const miniGuide = getMiniGuideRoot();
+
+  if (miniGuide) {
+    for (const entry of miniGuide.querySelectorAll(EXPLORE_ENTRY)) {
+      entry.remove();
+    }
   }
 };
 
-const scheduleDetach = (): void => {
+// Check only the mutated subtree, not the whole guide, during rapid updates.
+const purge = (node: Element): void => {
+  const section = node.closest(SECTION_SELECTOR);
+
+  if (section) {
+    if (isExploreSection(section)) {
+      detachSection(section);
+    }
+  } else {
+    for (const candidate of node.querySelectorAll(SECTION_SELECTOR)) {
+      if (isExploreSection(candidate)) {
+        detachSection(candidate);
+      }
+    }
+  }
+
+  const entry = node.closest(EXPLORE_ENTRY);
+
+  if (entry) {
+    entry.remove();
+    return;
+  }
+
+  for (const miniEntry of node.querySelectorAll(EXPLORE_ENTRY)) {
+    miniEntry.remove();
+  }
+};
+
+const flush = (): void => {
+  scheduled = false;
+
+  if (!active) {
+    pendingTargets.clear();
+    return;
+  }
+
+  for (const target of pendingTargets) {
+    if (target.isConnected) {
+      purge(target);
+    }
+  }
+
+  pendingTargets.clear();
+};
+
+const scheduleFlush = (): void => {
   if (scheduled) {
     return;
   }
 
   scheduled = true;
-  queueMicrotask(detachExplore);
+  queueMicrotask(flush);
 };
 
 const onMutations = (records: MutationRecord[]): void => {
@@ -71,11 +151,17 @@ const onMutations = (records: MutationRecord[]): void => {
     return;
   }
 
+  let added = false;
+
   for (const record of records) {
-    if (record.addedNodes.length > 0) {
-      scheduleDetach();
-      return;
+    if (record.addedNodes.length > 0 && record.target instanceof Element) {
+      pendingTargets.add(record.target);
+      added = true;
     }
+  }
+
+  if (added) {
+    scheduleFlush();
   }
 };
 
@@ -93,12 +179,15 @@ const disconnectObserver = (): void => {
   observer?.disconnect();
   observer = null;
   observedRoots = [];
+  sectionsRoot = null;
+  miniGuideRoot = null;
+  pendingTargets.clear();
 };
 
 const findRoots = (): Element[] => {
   // #guide survives full, collapsed, and mini layouts; #guide-wrapper is the fallback.
   const guide = document.querySelector("#guide") ?? document.querySelector("#guide-wrapper");
-  const miniGuide = document.querySelector("ytd-mini-guide-renderer");
+  const miniGuide = document.querySelector(MINI_GUIDE);
 
   return [guide, miniGuide].filter((root): root is Element => root !== null);
 };
