@@ -34,15 +34,9 @@ const pendingTargets = new Set<Element>();
 let scheduled = false;
 let active = false;
 
-const isExploreSection = (section: Element): boolean => {
-    const title = section.querySelector("#guide-section-title")?.textContent?.trim();
-
-    return (
-        section.classList.contains(SECTION_CLASS) ||
-        title === TARGET_TITLE ||
-        section.querySelector(EXPLORE_LINK_SELECTOR) !== null
-    );
-};
+const isExploreSection = (section: Element): boolean =>
+    section.classList.contains(SECTION_CLASS) ||
+    section.querySelector(EXPLORE_LINK_SELECTOR) !== null;
 
 const detachSection = (section: Element): void => {
     section.classList.add(SECTION_CLASS);
