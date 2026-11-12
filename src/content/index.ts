@@ -5,6 +5,7 @@ import { initSidebarFooter } from "./sidebarFooter";
 import { initTopLogo } from "./topLogo";
 import { initTopicBar } from "./topicBar";
 import { initMoreFromYouTube } from "./moreFromYouTube";
+import { initInFeedAds } from "./inFeedAds";
 
 const HOME_CLASS = "veloxtube-home";
 const SEARCH_CLASS = "veloxtube-search";
@@ -44,6 +45,7 @@ let scheduled = false;
 
 const apply = (): void => {
   scheduled = false;
+  initInFeedAds();
   initMoreFromYouTube(flags.moreFromYouTubeEnabled);
   document.documentElement.classList.toggle(HOME_CLASS, flags.homeShortsEnabled);
   document.documentElement.classList.toggle(SEARCH_CLASS, flags.searchShortsEnabled);
