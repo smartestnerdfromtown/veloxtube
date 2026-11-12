@@ -7,6 +7,7 @@ const ROOTS = [
   `${HOME} ytd-rich-grid-renderer > #header`,
   `${HOME} #chips-below`,
   `${HOME} #home-chips`,
+  "ytd-search ytd-search-header-renderer",
   "ytd-watch-flexy #related",
 ];
 
@@ -15,6 +16,8 @@ const CHIP_SELECTORS = [
   `${HOME} #header yt-chip-cloud-renderer`,
   `${HOME} #chips-below`,
   `${HOME} #home-chips`,
+  "ytd-search ytd-search-header-renderer #chip-bar",
+  "ytd-search ytd-search-header-renderer yt-chip-cloud-renderer",
   "ytd-watch-flexy #related ytd-feed-filter-chip-bar-renderer",
   "ytd-watch-flexy #related yt-related-chip-cloud-renderer",
   "ytd-watch-next-secondary-results-renderer yt-related-chip-cloud-renderer",
@@ -23,6 +26,10 @@ const CHIP_SELECTORS = [
 const CHIP_CSS = `${CHIP_SELECTORS},
 ${HOME_HEADER}.${HIDDEN_HEADER} {
   display: none !important;
+}
+
+#frosted-glass.with-chipbar {
+  height: var(--ytd-toolbar-height, 56px) !important;
 }`;
 
 let styleElement: HTMLStyleElement | null = null;
