@@ -2,24 +2,30 @@ type CleanerOptions = {
     container: string;
     matcher: string;
     subtree?: boolean;
-    pruneSection?: boolean;
+    pruneRichSections?: boolean;
+    pruneEmptySections?: boolean;
 };
+
+
 
 export const createShortsCleaner = ({
     container,
     matcher,
     subtree = false,
-    pruneSection = false,
+    pruneRichSections = false,
+    pruneEmptySections = false,
 }: CleanerOptions): ((enabled: boolean) => void) => {
     const remove = (element: Element): void => {
-        const richSection = element.closest("ytd-rich-section-renderer");
+        if (pruneRichSections) {
+            const richSection = element.closest("ytd-rich-section-renderer");
 
-        if (richSection) {
-            richSection.remove();
-            return;
+            if (richSection) {
+                richSection.remove();
+                return;
+            }
         }
 
-        const section = pruneSection ? element.closest("ytd-item-section-renderer") : null;
+        const section = pruneEmptySections ? element.closest("ytd-item-section-renderer") : null;
         element.remove();
 
         if (section?.querySelector("#contents")?.childElementCount === 0) {
@@ -72,7 +78,7 @@ export const createShortsCleaner = ({
         for (const record of records) {
             for (const node of record.addedNodes) {
                 if (node instanceof Element) {
-                    pending.push(node);
+                    pending.add(node);
                     added = true;
                 }
             }
@@ -91,7 +97,7 @@ export const createShortsCleaner = ({
             observer?.disconnect();
             observer = undefined;
             target = null;
-            pending = [];
+            pending.clear();
             return;
         }
 
@@ -103,7 +109,7 @@ export const createShortsCleaner = ({
 
         observer?.disconnect();
         target = root;
-        pending = [];
+        pending.clear();
 
         if (!root) {
             observer = undefined;
