@@ -6,22 +6,17 @@ const SECTION_SELECTOR = `${SECTIONS_ROOT} > ${GUIDE_SECTION}`;
 const MINI_GUIDE = "ytd-mini-guide-renderer";
 const MINI_ENTRY_SELECTOR = `${MINI_GUIDE} #items > ytd-mini-guide-entry-renderer`;
 
-// Platform paths remain unique to Explore; channel links can also appear in subscriptions.
-const EXPLORE_LINKS = [
+const EXPLORE_LINK_SELECTOR = [
     'a[href="/gaming"]',
+    'a[href^="/feed/"]',
     'a[href^="/podcasts"]',
-    'a[href^="/feed/podcasts"]',
-    'a[href^="/feed/trending"]',
-    'a[href^="/feed/explore"]',
+    'a[href$="memberships"]',
     'a[href="/playables"]',
-    'a[href^="/feed/storefront"]',
-    'a[href^="/paid_memberships"]',
-    'a[href="/memberships"]',
-].join(",\n");
+].join(",");
 
-const EXPLORE_SECTION = `${SECTION_SELECTOR}:has(${EXPLORE_LINKS})`;
+const EXPLORE_SECTION = `${SECTION_SELECTOR}:has(${EXPLORE_LINK_SELECTOR})`;
+const EXPLORE_ENTRY = `${MINI_ENTRY_SELECTOR}:has(${EXPLORE_LINK_SELECTOR})`;
 const EXPLORE_MARKED = `${SECTION_SELECTOR}.${SECTION_CLASS}`;
-const EXPLORE_ENTRY = `${MINI_ENTRY_SELECTOR}:has(${EXPLORE_LINKS})`;
 
 const EXPLORE_CSS = `${EXPLORE_SECTION},
 ${EXPLORE_MARKED},
@@ -45,7 +40,7 @@ const isExploreSection = (section: Element): boolean => {
     return (
         section.classList.contains(SECTION_CLASS) ||
         title === TARGET_TITLE ||
-        section.querySelector(EXPLORE_LINKS) !== null
+        section.querySelector(EXPLORE_LINK_SELECTOR) !== null
     );
 };
 
