@@ -117,7 +117,7 @@ const purge = (node: Element): void => {
         return;
     }
 
-    sweepSections(node, SECTION_SELECTOR);
+    sweepSections(node, GUIDE_SECTION);
     sweepEntries(node, EXPLORE_ENTRY);
 };
 
@@ -126,6 +126,12 @@ const flush = (): void => {
 
     if (!active) {
         pendingTargets.clear();
+        return;
+    }
+
+    if (!observedRoots.every((root) => root.isConnected)) {
+        pendingTargets.clear();
+        observeRoots();
         return;
     }
 
@@ -166,15 +172,25 @@ const setStyles = (): void => {
     (document.head ?? document.documentElement).append(styleElement);
 };
 
-// Release every strong reference so detached sidebar nodes stay collectable.
+const resetRoots = (): void => {
+    guideRoot = null;
+    sectionsRoot = null;
+    miniGuideRoot = null;
+};
+
 const disconnectObserver = (): void => {
     observer?.disconnect();
     observer = null;
     observedRoots = [];
-    guideRoot = null;
-    sectionsRoot = null;
-    miniGuideRoot = null;
     pendingTargets.clear();
+};
+
+const teardown = (): void => {
+    active = false;
+    disconnectObserver();
+    resetRoots();
+    styleElement?.remove();
+    styleElement = null;
 };
 
 //// It works, just do not touch it
@@ -216,13 +232,6 @@ const observeRoots = (): void => {
     detachExplore();
 };
 ////
-
-const teardown = (): void => {
-    active = false;
-    disconnectObserver();
-    styleElement?.remove();
-    styleElement = null;
-};
 
 export const initExploreMenu = (enabled: boolean): void => {
     if (!enabled) {
