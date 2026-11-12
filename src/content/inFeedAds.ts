@@ -1,3 +1,21 @@
+const SPONSORED_MARKERS = [
+  "badge-shape.ytBadgeShapeAd",
+  "badge-shape.yt-badge-shape--ad",
+  "feed-ad-metadata-view-model",
+  "ad-badge-view-model",
+  "ad-details-line-view-model",
+  "carousel-ad-card-collection-view-model",
+];
+
+const SPONSORED_CARDS = [
+  "ytd-rich-item-renderer[is-ad]",
+  "ytd-rich-item-renderer[ad-impression]",
+  "ytd-rich-item-renderer[is-sponsored]",
+  "ytd-video-renderer[is-ad]",
+  "ytd-video-renderer[ad-impression]",
+  "ytd-video-renderer[is-sponsored]",
+];
+
 const AD_NODES = [
   "ytd-ad-slot-renderer",
   "ytd-search-pyv-renderer",
@@ -10,6 +28,8 @@ const AD_NODES = [
   "ytd-in-feed-ad-layout-renderer",
 ];
 
+const SPONSORED_SELECTOR = SPONSORED_MARKERS.join(",\n");
+
 const AD_CARDS = [
   "ytd-rich-item-renderer:has(ytd-ad-slot-renderer)",
   "ytd-rich-item-renderer:has(ytd-promoted-sparkles-web-renderer)",
@@ -17,21 +37,16 @@ const AD_CARDS = [
   "ytd-rich-item-renderer:has(ytd-compact-promoted-video-renderer)",
   "ytd-rich-item-renderer:has(ytd-display-ad-renderer)",
   "ytd-rich-item-renderer:has(ytd-carousel-ad-renderer)",
-  "ytd-rich-item-renderer:has(badge-shape.ytBadgeShapeAd, badge-shape.yt-badge-shape--ad)",
-  "ytd-video-renderer:has(badge-shape.ytBadgeShapeAd, badge-shape.yt-badge-shape--ad)",
-  "yt-lockup-view-model:has(badge-shape.ytBadgeShapeAd, badge-shape.yt-badge-shape--ad)",
+  `ytd-rich-item-renderer:has(${SPONSORED_SELECTOR})`,
+  `ytd-video-renderer:has(${SPONSORED_SELECTOR})`,
+  `yt-lockup-view-model:has(${SPONSORED_SELECTOR})`,
   "ytd-item-section-renderer:has(> #contents > ytd-ad-slot-renderer:only-child)",
   "ytd-item-section-renderer:has(> #contents > ytd-search-pyv-renderer:only-child)",
 ];
 
-const AD_BADGE_SELECTOR = "badge-shape.ytBadgeShapeAd, badge-shape.yt-badge-shape--ad";
 const AD_NODE_SELECTOR = AD_NODES.join(",\n");
-const AD_SELECTOR = [...AD_NODES, ...AD_CARDS].join(",\n");
-
-// Hide the ad node and its enclosing feed card together to avoid empty slots.
-const AD_CSS = `${AD_SELECTOR} {
-  display: none !important;
-}`;
+const AD_SELECTOR = [...AD_NODES, ...AD_CARDS, ...SPONSORED_CARDS].join(",\n");
+const AD_MATCH_SELECTOR = [...AD_NODES, ...SPONSORED_MARKERS, ...SPONSORED_CARDS].join(",\n");
 
 const FEED_ROOTS = [
   'ytd-browse[page-subtype="home"] ytd-rich-grid-renderer',
@@ -39,6 +54,13 @@ const FEED_ROOTS = [
   "ytd-search ytd-section-list-renderer",
   "ytd-watch-flexy #related",
 ];
+
+const FEED_SCOPE = `:is(${FEED_ROOTS.join(",\n")})`;
+
+// Keep ad styles inside feed roots so organic cards and watch UI are untouched.
+const AD_CSS = `${FEED_SCOPE} :is(${AD_SELECTOR}) {
+  display: none !important;
+}`;
 
 let styleElement: HTMLStyleElement | null = null;
 let observer: MutationObserver | null = null;
@@ -56,10 +78,17 @@ const removeAd = (ad: Element): void => {
     return;
   }
 
-  const card = ad.closest("ytd-video-renderer, yt-lockup-view-model");
+  const video = ad.closest("ytd-video-renderer");
 
-  if (card) {
-    card.remove();
+  if (video) {
+    video.remove();
+    return;
+  }
+
+  const lockup = ad.closest("yt-lockup-view-model");
+
+  if (lockup) {
+    lockup.remove();
     return;
   }
 
@@ -74,42 +103,45 @@ const removeAd = (ad: Element): void => {
   ad.remove();
 };
 
-const removeAdBadge = (badge: Element): void => {
-  const richItem = badge.closest("ytd-rich-item-renderer");
+const removeSponsoredCard = (marker: Element): void => {
+  const richItem = marker.closest("ytd-rich-item-renderer");
 
   if (richItem) {
     richItem.remove();
     return;
   }
 
-  const card = badge.closest("ytd-video-renderer, yt-lockup-view-model");
-  (card ?? badge).remove();
-};
+  const video = marker.closest("ytd-video-renderer");
 
-// Added nodes can be the ad itself, a wrapper, or content injected into an existing ad slot.
-const purge = (node: Element): void => {
-  const ad = node.closest(AD_NODE_SELECTOR);
-
-  if (ad) {
-    removeAd(ad);
-  } else {
-    for (const element of node.querySelectorAll(AD_NODE_SELECTOR)) {
-      if (element.isConnected) {
-        removeAd(element);
-      }
-    }
-  }
-
-  const badge = node.closest(AD_BADGE_SELECTOR);
-
-  if (badge) {
-    removeAdBadge(badge);
+  if (video) {
+    video.remove();
     return;
   }
 
-  for (const element of node.querySelectorAll(AD_BADGE_SELECTOR)) {
+  const lockup = marker.closest("yt-lockup-view-model");
+  (lockup ?? marker).remove();
+};
+
+const removeMatch = (element: Element): void => {
+  if (element.matches(AD_NODE_SELECTOR)) {
+    removeAd(element);
+  } else {
+    removeSponsoredCard(element);
+  }
+};
+
+// One combined query covers ad nodes, sponsored markers, and sponsorship attributes.
+const purge = (node: Element): void => {
+  const match = node.closest(AD_MATCH_SELECTOR);
+
+  if (match) {
+    removeMatch(match);
+    return;
+  }
+
+  for (const element of node.querySelectorAll(AD_MATCH_SELECTOR)) {
     if (element.isConnected) {
-      removeAdBadge(element);
+      removeMatch(element);
     }
   }
 };
@@ -132,6 +164,7 @@ const flush = (): void => {
   }
 };
 
+// One microtask flush coalesces mutation batches from rapid feed scrolling.
 const scheduleFlush = (): void => {
   if (scheduled) {
     return;
