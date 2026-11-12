@@ -195,13 +195,7 @@ const onMutations = (records: MutationRecord[]): void => {
   }
 };
 
-const setStyles = (enabled: boolean): void => {
-  if (!enabled) {
-    styleElement?.remove();
-    styleElement = null;
-    return;
-  }
-
+const setStyles = (): void => {
   if (styleElement?.isConnected) {
     return;
   }
@@ -218,14 +212,22 @@ const disconnectObserver = (): void => {
   pendingNodes = [];
 };
 
-export const initInFeedAds = (enabled: boolean): void => {
-  active = enabled;
-  setStyles(enabled);
+// Drop every observer, style, and DOM reference when the feature is disabled.
+const teardown = (): void => {
+  active = false;
+  disconnectObserver();
+  styleElement?.remove();
+  styleElement = null;
+};
 
+export const initInFeedAds = (enabled: boolean): void => {
   if (!enabled) {
-    disconnectObserver();
+    teardown();
     return;
   }
+
+  active = true;
+  setStyles();
 
   const roots = FEED_ROOTS.map((selector) => document.querySelector(selector)).filter(
     (root): root is Element => root !== null,
