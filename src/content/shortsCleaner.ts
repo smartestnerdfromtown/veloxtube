@@ -40,24 +40,55 @@ export const createShortsCleaner = ({
     }
   };
 
-  const onMutations = (records: MutationRecord[]): void => {
-    for (const record of records) {
-      for (const node of record.addedNodes) {
-        if (node instanceof Element && node.isConnected) {
-          purge(node);
-        }
+  let observer: MutationObserver | undefined;
+  let target: Element | null = null;
+  let pending: Element[] = [];
+  let scheduled = false;
+
+  const flush = (): void => {
+    scheduled = false;
+
+    if (!observer) {
+      pending = [];
+      return;
+    }
+
+    const nodes = pending;
+    pending = [];
+
+    for (const node of nodes) {
+      if (node.isConnected) {
+        purge(node);
       }
     }
   };
 
-  let observer: MutationObserver | undefined;
-  let target: Element | null = null;
+  const onMutations = (records: MutationRecord[]): void => {
+    let added = false;
+
+    for (const record of records) {
+      for (const node of record.addedNodes) {
+        if (node instanceof Element) {
+          pending.push(node);
+          added = true;
+        }
+      }
+    }
+
+    if (!added || scheduled) {
+      return;
+    }
+
+    scheduled = true;
+    queueMicrotask(flush);
+  };
 
   return (enabled: boolean): void => {
     if (!enabled) {
       observer?.disconnect();
       observer = undefined;
       target = null;
+      pending = [];
       return;
     }
 
@@ -69,8 +100,10 @@ export const createShortsCleaner = ({
 
     observer?.disconnect();
     target = root;
+    pending = [];
 
     if (!root) {
+      observer = undefined;
       return;
     }
 
