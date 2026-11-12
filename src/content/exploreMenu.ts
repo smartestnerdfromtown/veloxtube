@@ -67,43 +67,36 @@ const getMiniGuideRoot = (): Element | null => {
     return miniGuideRoot;
 };
 
-// Initial and navigation sweeps stay scoped to the cached sidebar containers.
-const detachExplore = (): void => {
-    const sections = getSectionsRoot();
 
-    if (sections) {
-        for (const section of sections.querySelectorAll(`:scope > ${GUIDE_SECTION}`)) {
-            if (isExploreSection(section)) {
-                detachSection(section);
-            }
-        }
+const sweepSections = (root: Element | null, selector: string): void => {
+    if (!root) {
+        return;
     }
 
-    const miniGuide = getMiniGuideRoot();
-
-    if (miniGuide) {
-        for (const entry of miniGuide.querySelectorAll(EXPLORE_ENTRY)) {
-            entry.remove();
-        }
-    }
-};
-
-// Check only the mutated subtree, not the whole guide, during rapid updates.
-const purge = (node: Element): void => {
-    const section = node.closest(SECTION_SELECTOR);
-
-    if (section) {
+    for (const section of root.querySelectorAll(selector)) {
         if (isExploreSection(section)) {
             detachSection(section);
         }
-    } else {
-        for (const candidate of node.querySelectorAll(SECTION_SELECTOR)) {
-            if (isExploreSection(candidate)) {
-                detachSection(candidate);
-            }
-        }
+    }
+}
+
+const sweepEntries = (root: Element | null, selector: string): void => {
+    if (!root) {
+        return;
     }
 
+    for (const entry of root.querySelectorAll(selector)) {
+        entry.remove();
+    }
+};
+
+
+const detachExplore = (): void => {
+    sweepSections(getSectionsRoot(), `:scope > ${GUIDE_SECTION}`);
+    sweepEntries(getMiniGuideRoot(), EXPLORE_ENTRY);
+};
+
+const purge = (node: Element): void => {
     const entry = node.closest(EXPLORE_ENTRY);
 
     if (entry) {
@@ -111,9 +104,18 @@ const purge = (node: Element): void => {
         return;
     }
 
-    for (const miniEntry of node.querySelectorAll(EXPLORE_ENTRY)) {
-        miniEntry.remove();
+    const section = node.closest(SECTION_SELECTOR);
+
+    if (section) {
+        if (isExploreSection(section)) {
+            detachSection(section);
+        }
+
+        return;
     }
+
+    sweepSections(node, SECTION_SELECTOR);
+    sweepEntries(node, EXPLORE_ENTRY);
 };
 
 const flush = (): void => {
