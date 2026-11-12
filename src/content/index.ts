@@ -16,6 +16,7 @@ const KEYS = [
   "sidebarFooterEnabled",
   "topLogoEnabled",
   "topicBarEnabled",
+  "moreFromYouTubeEnabled",
 ] as const;
 
 type Flags = {
@@ -25,6 +26,7 @@ type Flags = {
   sidebarFooterEnabled: boolean;
   topLogoEnabled: boolean;
   topicBarEnabled: boolean;
+  moreFromYouTubeEnabled: boolean;
 };
 
 const DEFAULTS: Flags = {
@@ -34,6 +36,7 @@ const DEFAULTS: Flags = {
   sidebarFooterEnabled: true,
   topLogoEnabled: true,
   topicBarEnabled: true,
+  moreFromYouTubeEnabled: true,
 };
 
 let flags: Flags = DEFAULTS;
@@ -41,7 +44,7 @@ let scheduled = false;
 
 const apply = (): void => {
   scheduled = false;
-  initMoreFromYouTube();
+  initMoreFromYouTube(flags.moreFromYouTubeEnabled);
   document.documentElement.classList.toggle(HOME_CLASS, flags.homeShortsEnabled);
   document.documentElement.classList.toggle(SEARCH_CLASS, flags.searchShortsEnabled);
   document.documentElement.classList.toggle(SIDEBAR_CLASS, flags.sidebarShortsEnabled);

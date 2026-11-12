@@ -5,6 +5,7 @@ const KEYS = [
   "sidebarFooterEnabled",
   "topLogoEnabled",
   "topicBarEnabled",
+  "moreFromYouTubeEnabled",
 ] as const;
 
 type Key = (typeof KEYS)[number];
@@ -16,6 +17,7 @@ const DEFAULTS: Record<Key, boolean> = {
   sidebarFooterEnabled: true,
   topLogoEnabled: true,
   topicBarEnabled: true,
+  moreFromYouTubeEnabled: true,
 };
 
 const getInput = (key: Key): HTMLInputElement => {
