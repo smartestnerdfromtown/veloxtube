@@ -129,19 +129,17 @@ const flush = (): void => {
         return;
     }
 
-    if (!observedRoots.every((root) => root.isConnected)) {
-        pendingTargets.clear();
-        observeRoots();
-        return;
-    }
+    const targets = [...pendingTargets];
+    const outermost = targets.filter(
+        (target) => !targets.some((other) => other !== target && other.contains(target)),
+    );
+    pendingTargets.clear();
 
-    for (const target of pendingTargets) {
+    for (const target of outermost) {
         if (target.isConnected) {
             purge(target);
         }
     }
-
-    pendingTargets.clear();
 };
 
 const scheduleFlush = (): void => {
