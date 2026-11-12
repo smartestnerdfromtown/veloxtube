@@ -1,3 +1,5 @@
+//// NOTE: FOR FUTURE, EVERYTHING HERE IS ALREADY KINDA WELL-WRITTEN, DO NOT TOUCH IT
+
 const SECTION_CLASS = "veloxtube-explore-menu";
 const SECTIONS_ROOT = "ytd-guide-renderer #sections";
 const GUIDE_SECTION = "ytd-guide-section-renderer";
