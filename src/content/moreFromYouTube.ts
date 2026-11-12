@@ -1,22 +1,30 @@
-// The section title is text-only, so its promotional links are the stable CSS anchor.
-const SECTION_SELECTOR = `ytd-guide-renderer ytd-guide-section-renderer:has(
-  a[href$="/premium"],
-  a[href*="music.youtube.com"],
-  a[href*="youtubekids.com"],
-  a[href$="/labs"]
-)`;
+const TARGET_TITLE = "More from YouTube";
+const SECTION_CLASS = "veloxtube-more-from-youtube";
+const GUIDE_SECTION_SELECTOR = "ytd-guide-renderer ytd-guide-section-renderer";
+const TARGET_SELECTOR = `${GUIDE_SECTION_SELECTOR}.${SECTION_CLASS}`;
 
-const SECTION_CSS = `${SECTION_SELECTOR} {
+const SECTION_CSS = `${TARGET_SELECTOR} {
   display: none !important;
 }`;
 
-const GUIDE_ROOT = "#guide-wrapper";
+// #guide survives full, collapsed, and mini guide layouts; #guide-wrapper is the fallback.
+const GUIDE_ROOT = "#guide, #guide-wrapper";
 
 let styleElement: HTMLStyleElement | null = null;
 let observer: MutationObserver | null = null;
 let guideRoot: Element | null = null;
 let scheduled = false;
 let active = false;
+
+const markTargetSections = (root: Element): void => {
+  for (const section of root.querySelectorAll(GUIDE_SECTION_SELECTOR)) {
+    const title = section.querySelector("#guide-section-title")?.textContent?.trim();
+
+    if (title === TARGET_TITLE) {
+      section.classList.add(SECTION_CLASS);
+    }
+  }
+};
 
 const detachSections = (): void => {
   scheduled = false;
@@ -25,7 +33,9 @@ const detachSections = (): void => {
     return;
   }
 
-  for (const section of guideRoot.querySelectorAll(SECTION_SELECTOR)) {
+  markTargetSections(guideRoot);
+
+  for (const section of guideRoot.querySelectorAll(TARGET_SELECTOR)) {
     section.remove();
   }
 };
@@ -40,6 +50,10 @@ const scheduleDetach = (): void => {
 };
 
 const onMutations = (records: MutationRecord[]): void => {
+  if (!active) {
+    return;
+  }
+
   for (const record of records) {
     if (record.addedNodes.length > 0) {
       scheduleDetach();
