@@ -3,6 +3,7 @@ import { initSearchShorts } from "./searchShorts";
 import { initSidebarShorts } from "./sidebarShorts";
 import { initSidebarFooter } from "./sidebarFooter";
 import { initTopLogo } from "./topLogo";
+import { initTopicBar } from "./topicBar";
 
 const HOME_CLASS = "veloxtube-home";
 const SEARCH_CLASS = "veloxtube-search";
@@ -30,6 +31,8 @@ const DEFAULTS: Flags = {
   sidebarFooterEnabled: true,
   topLogoEnabled: true,
 };
+
+initTopicBar();
 
 let flags: Flags = DEFAULTS;
 let scheduled = false;
