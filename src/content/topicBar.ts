@@ -1,14 +1,28 @@
-const ROOTS = ['ytd-browse[page-subtype="home"] #header', "ytd-watch-flexy #related"];
+const HOME = 'ytd-browse[page-subtype="home"]';
+const HIDDEN_HEADER = "veloxtube-chip-header";
+
+const ROOTS = [
+  `${HOME} > #header`,
+  `${HOME} ytd-rich-grid-renderer > #header`,
+  `${HOME} #chips-below`,
+  `${HOME} #home-chips`,
+  "ytd-watch-flexy #related",
+];
 
 const CHIP_SELECTORS = [
-  'ytd-browse[page-subtype="home"] ytd-feed-filter-chip-bar-renderer',
-  'ytd-browse[page-subtype="home"] #header yt-chip-cloud-renderer',
-  "ytd-watch-flexy ytd-feed-filter-chip-bar-renderer",
-  "ytd-watch-flexy yt-related-chip-cloud-renderer",
+  `${HOME} ytd-feed-filter-chip-bar-renderer`,
+  `${HOME} #header yt-chip-cloud-renderer`,
+  `${HOME} #chips-below`,
+  `${HOME} #home-chips`,
+  "ytd-watch-flexy #related ytd-feed-filter-chip-bar-renderer",
+  "ytd-watch-flexy #related yt-related-chip-cloud-renderer",
   "ytd-watch-next-secondary-results-renderer yt-related-chip-cloud-renderer",
 ].join(",\n");
 
-const CHIP_CSS = `${CHIP_SELECTORS} {\n  display: none !important;\n}`;
+const CHIP_CSS = `${CHIP_SELECTORS},
+${HOME} #header.${HIDDEN_HEADER} {
+  display: none !important;
+}`;
 
 let styleElement: HTMLStyleElement | null = null;
 let observer: MutationObserver | null = null;
@@ -24,6 +38,7 @@ const detachChips = (): void => {
   }
 
   for (const chips of document.querySelectorAll(CHIP_SELECTORS)) {
+    chips.closest(`${HOME} #header`)?.classList.add(HIDDEN_HEADER);
     chips.remove();
   }
 };
