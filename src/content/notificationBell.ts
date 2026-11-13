@@ -1,15 +1,13 @@
 const MASTHEAD = "ytd-masthead";
-
-const BELL_SELECTOR = [
-    "ytd-masthead #buttons > ytd-notification-topbar-button-renderer",
-    "ytd-masthead #notification-button",
-].join(",\n");
-
+const BELL_CONTAINER = `${MASTHEAD} #buttons`;
+const BELL_TYPES = ":is(ytd-notification-topbar-button-renderer, #notification-button)";
+const BELL_SELECTOR = `${BELL_CONTAINER} ${BELL_TYPES}`;
 const BELL_CSS = `${BELL_SELECTOR} {\n    display: none !important;\n}`;
 
 let styleElement: HTMLStyleElement | null = null;
 let observer: MutationObserver | null = null;
 let observedRoot: Element | null = null;
+let bellContainer: Element | null = null;
 let scheduled = false;
 let active = false;
 
@@ -20,7 +18,15 @@ const detachBells = (): void => {
         return;
     }
 
-    for (const bell of document.querySelectorAll(BELL_SELECTOR)) {
+    if (!bellContainer?.isConnected) {
+        bellContainer = document.querySelector(BELL_CONTAINER);
+    }
+
+    if (!bellContainer) {
+        return;
+    }
+
+    for (const bell of bellContainer.querySelectorAll(BELL_TYPES)) {
         bell.remove();
     }
 };
@@ -63,6 +69,7 @@ const disconnectObserver = (): void => {
     observer?.disconnect();
     observer = null;
     observedRoot = null;
+    bellContainer = null;
 };
 
 export const initNotificationBell = (enabled: boolean): void => {
@@ -77,6 +84,7 @@ export const initNotificationBell = (enabled: boolean): void => {
     const root = document.querySelector(MASTHEAD);
 
     if (root === observedRoot && root?.isConnected) {
+        detachBells();
         return;
     }
 
