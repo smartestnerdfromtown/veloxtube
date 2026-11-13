@@ -22,6 +22,8 @@
 - Complete removal of "Explore" section (or Guide Explore Section) or whatever it is called. (12th November 2026)
 - Complete removal of "Explore" section (or Guide Explore Section) or whatever it is called (12th Novemeber 2026)
 - Complete removal of "Explore" section or whatever it is called (13th Novemeber 2026)
+- Complete removal of "Mic Button" section near search area. (13th November)
+- Complete removal of Channel "Join" Button. (13th November)
 
 ### Ideas
 

@@ -5,6 +5,7 @@ import { initSidebarFooter } from "./sidebarFooter";
 import { initTopLogo } from "./topLogo";
 import { initNotificationBell } from "./notificationBell";
 import { initMicButton } from "./micButton";
+import { initJoinButton } from "./joinButton";
 import { initTopicBar } from "./topicBar";
 import { initMoreFromYouTube } from "./moreFromYouTube";
 import { initInFeedAds } from "./inFeedAds";
@@ -73,6 +74,7 @@ const apply = (): void => {
     initTopLogo(flags.topLogoEnabled);
     initNotificationBell(flags.notificationBellEnabled);
     initMicButton(flags.micButtonEnabled);
+    initJoinButton();
     initTopicBar(flags.topicBarEnabled);
 };
 
