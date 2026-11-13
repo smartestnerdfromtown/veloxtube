@@ -1,5 +1,8 @@
 const WATCH_OWNER = "ytd-watch-flexy ytd-video-owner-renderer";
-const JOIN_TARGETS = ["#sponsor-button", 'ytd-button-renderer:has(button[aria-label*="Join" i])'];
+const JOIN_TARGETS = [
+    "#sponsor-button",
+    ':is(button-view-model, yt-button-view-model, ytd-button-renderer):has(:is(button, a)[aria-label*="Join" i])',
+];
 const JOIN_TARGETS_SELECTOR = JOIN_TARGETS.join(",\n");
 const JOIN_SELECTOR = JOIN_TARGETS.map((target) => `${WATCH_OWNER} ${target}`).join(",\n");
 const JOIN_CSS = `${JOIN_SELECTOR} {\n    display: none !important;\n}`;

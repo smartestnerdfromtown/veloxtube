@@ -9,7 +9,9 @@ const JOIN_TARGETS = [
     'button-view-model:has(button[aria-label*="Join" i])',
 ];
 const JOIN_TARGETS_SELECTOR = JOIN_TARGETS.join(",\n");
-const SHELF_TARGET = "#action-button:has(button)";
+
+const SHELF_TARGET = "#action-button";
+
 const HEADER_SCOPE = `${CHANNEL_PAGE} :is(${HEADER_CONTAINERS})`;
 
 const JOIN_SELECTOR = [
