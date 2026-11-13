@@ -1,15 +1,15 @@
-import { initHomeShorts } from "./homeShorts";
-import { initSearchShorts } from "./searchShorts";
-import { initSidebarShorts } from "./sidebarShorts";
-import { initSidebarFooter } from "./sidebarFooter";
-import { initTopLogo } from "./topLogo";
-import { initNotificationBell } from "./notificationBell";
-import { initMicButton } from "./micButton";
-import { initJoinButton } from "./joinButton";
-import { initTopicBar } from "./topicBar";
-import { initMoreFromYouTube } from "./moreFromYouTube";
-import { initInFeedAds } from "./inFeedAds";
-import { initExploreMenu } from "./exploreMenu";
+import { initHomeShorts } from "./home/homeShorts";
+import { initSearchShorts } from "./search/searchShorts";
+import { initSidebarShorts } from "./sidebar/sidebarShorts";
+import { initSidebarFooter } from "./sidebar/sidebarFooter";
+import { initTopLogo } from "./masthead/topLogo";
+import { initNotificationBell } from "./masthead/notificationBell";
+import { initMicButton } from "./masthead/micButton";
+import { initJoinButton } from "./channel/joinButton";
+import { initTopicBar } from "./feeds/topicBar";
+import { initMoreFromYouTube } from "./sidebar/moreFromYouTube";
+import { initInFeedAds } from "./feeds/inFeedAds";
+import { initExploreMenu } from "./sidebar/exploreMenu";
 
 const HOME_CLASS = "veloxtube-home";
 const SEARCH_CLASS = "veloxtube-search";
