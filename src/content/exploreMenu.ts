@@ -69,7 +69,6 @@ const getMiniGuideRoot = (): Element | null => {
     return miniGuideRoot;
 };
 
-
 const sweepSections = (root: Element | null, selector: string): void => {
     if (!root) {
         return;
@@ -80,7 +79,7 @@ const sweepSections = (root: Element | null, selector: string): void => {
             detachSection(section);
         }
     }
-}
+};
 
 const sweepEntries = (root: Element | null, selector: string): void => {
     if (!root) {
@@ -91,7 +90,6 @@ const sweepEntries = (root: Element | null, selector: string): void => {
         entry.remove();
     }
 };
-
 
 const detachExplore = (): void => {
     sweepSections(getSectionsRoot(), `:scope > ${GUIDE_SECTION}`);

@@ -6,8 +6,6 @@ type CleanerOptions = {
     pruneEmptySections?: boolean;
 };
 
-
-
 export const createShortsCleaner = ({
     container,
     matcher,
@@ -54,7 +52,7 @@ export const createShortsCleaner = ({
 
     let observer: MutationObserver | undefined;
     let target: Element | null = null;
-    let pending = new Set<Element>();
+    const pending = new Set<Element>();
     let scheduled = false;
 
     const flush = (): void => {

@@ -14,6 +14,14 @@
 - Complete removal of "In-Feed Ad" (or Sponsored Feed Card / Promoted Video) or whatever it is called, because it may happen that user does not use any ad-blocker.
 - Complete removal of "Explore" section (or Guide Explore Section) or whatever it is called
 
+### Versions
+
+0.1.TEST
+
+- Complete removal of "In-Feed Ad" (or Sponsored Feed Card / Promoted Video) or whatever it is called, because it may happen that user does not use any ad-blocker. (12th Novemeber 2026)
+- Complete removal of "Explore" section (or Guide Explore Section) or whatever it is called. (12th November 2026)
+- Complete removal of "Explore" section (or Guide Explore Section) or whatever it is called (12th Novemeber 2026)
+- Complete removal of "Explore" section or whatever it is called (13th Novemeber 2026)
 
 ### Ideas
 
