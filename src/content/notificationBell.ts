@@ -5,7 +5,6 @@ const BELL_SELECTOR = `${BELL_CONTAINER} ${BELL_TYPES}`;
 const BELL_CSS = `${BELL_SELECTOR} {\n    display: none !important;\n}`;
 
 let styleElement: HTMLStyleElement | null = null;
-let observer: MutationObserver | null = null;
 let observedRoot: Element | null = null;
 let bellContainer: Element | null = null;
 let scheduled = false;
@@ -49,6 +48,8 @@ const onMutations = (records: MutationRecord[]): void => {
     }
 };
 
+const observer = new MutationObserver(onMutations);
+
 const setStyles = (enabled: boolean): void => {
     if (!enabled) {
         styleElement?.remove();
@@ -65,9 +66,8 @@ const setStyles = (enabled: boolean): void => {
     (document.head ?? document.documentElement).append(styleElement);
 };
 
-const disconnectObserver = (): void => {
-    observer?.disconnect();
-    observer = null;
+const stopObserving = (): void => {
+    observer.disconnect();
     observedRoot = null;
     bellContainer = null;
 };
@@ -77,7 +77,7 @@ export const initNotificationBell = (enabled: boolean): void => {
     setStyles(enabled);
 
     if (!enabled) {
-        disconnectObserver();
+        stopObserving();
         return;
     }
 
@@ -88,14 +88,13 @@ export const initNotificationBell = (enabled: boolean): void => {
         return;
     }
 
-    disconnectObserver();
+    stopObserving();
 
     if (!root) {
         return;
     }
 
     observedRoot = root;
-    observer = new MutationObserver(onMutations);
     observer.observe(root, { childList: true, subtree: true });
     detachBells();
 };
