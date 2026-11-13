@@ -5,6 +5,7 @@ const JOIN_SELECTOR = JOIN_TARGETS.map((target) => `${WATCH_OWNER} ${target}`).j
 const JOIN_CSS = `${JOIN_SELECTOR} {\n    display: none !important;\n}`;
 
 let styleElement: HTMLStyleElement | null = null;
+let observer: MutationObserver | null = null;
 let observedRoot: Element | null = null;
 let scheduled = false;
 let active = false;
@@ -47,8 +48,6 @@ const onMutations = (records: MutationRecord[]): void => {
     }
 };
 
-const observer = new MutationObserver(onMutations);
-
 const setStyles = (enabled: boolean): void => {
     if (!enabled) {
         styleElement?.remove();
@@ -66,8 +65,10 @@ const setStyles = (enabled: boolean): void => {
 };
 
 const stopObserving = (): void => {
-    observer.disconnect();
+    observer?.disconnect();
+    observer = null;
     observedRoot = null;
+    scheduled = false;
 };
 
 export const initVideoJoinButton = (enabled: boolean): void => {
@@ -93,6 +94,7 @@ export const initVideoJoinButton = (enabled: boolean): void => {
     }
 
     observedRoot = root;
+    observer = new MutationObserver(onMutations);
     observer.observe(root, { childList: true, subtree: true });
     detachJoinButton();
 };

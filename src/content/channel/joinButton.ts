@@ -24,6 +24,7 @@ const JOIN_ROOTS = `:is(${HEADER_CONTAINERS}, ${SHELF_CONTAINER}, yt-flexible-ac
 const FEED_ITEM = ":is(ytd-rich-item-renderer, ytd-video-renderer, yt-lockup-view-model)";
 
 let styleElement: HTMLStyleElement | null = null;
+let observer: MutationObserver | null = null;
 let observedRoot: Element | null = null;
 let scheduled = false;
 let active = false;
@@ -85,8 +86,6 @@ const onMutations = (records: MutationRecord[]): void => {
     }
 };
 
-const observer = new MutationObserver(onMutations);
-
 const setStyles = (enabled: boolean): void => {
     if (!enabled) {
         styleElement?.remove();
@@ -104,8 +103,10 @@ const setStyles = (enabled: boolean): void => {
 };
 
 const stopObserving = (): void => {
-    observer.disconnect();
+    observer?.disconnect();
+    observer = null;
     observedRoot = null;
+    scheduled = false;
 };
 
 export const initChannelJoinButton = (enabled: boolean): void => {
@@ -131,6 +132,7 @@ export const initChannelJoinButton = (enabled: boolean): void => {
     }
 
     observedRoot = root;
+    observer = new MutationObserver(onMutations);
     observer.observe(root, { childList: true, subtree: true });
     detachJoinButtons();
 };
