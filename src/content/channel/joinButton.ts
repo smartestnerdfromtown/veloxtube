@@ -2,21 +2,22 @@ const CHANNEL_PAGE = 'ytd-browse[page-subtype="channels"]';
 const HEADER_CONTAINERS = "yt-page-header-renderer, ytd-c4-tabbed-header-renderer";
 const SHELF_CONTAINER = "ytd-recognition-shelf-renderer";
 
-const JOIN_TARGETS = [
-    "#sponsor-button",
-    "button-view-model:has(button.ytSpecButtonShapeNextTonal.ytSpecButtonShapeNextIconLeading)",
-    "button-view-model:has(button.yt-spec-button-shape-next--tonal.yt-spec-button-shape-next--icon-leading)",
-    'button-view-model:has(button[aria-label*="Join" i])',
-];
+const JOIN_WRAPPERS = ":is(button-view-model, yt-button-view-model, ytd-button-renderer)";
+const JOIN_LABEL = '[aria-label*="Join" i]';
+const JOIN_MARKERS = `:is(${JOIN_LABEL}, .ytSpecButtonShapeNextTonal.ytSpecButtonShapeNextIconLeading, .yt-spec-button-shape-next--tonal.yt-spec-button-shape-next--icon-leading)`;
+
+const JOIN_TARGETS = ["#sponsor-button", JOIN_LABEL, `${JOIN_WRAPPERS}:has(${JOIN_MARKERS})`];
 const JOIN_TARGETS_SELECTOR = JOIN_TARGETS.join(",\n");
 
-const SHELF_TARGET = "#action-button";
+const SHELF_TARGETS = ["#action-button", JOIN_LABEL];
+const SHELF_TARGETS_SELECTOR = SHELF_TARGETS.join(",\n");
 
 const HEADER_SCOPE = `${CHANNEL_PAGE} :is(${HEADER_CONTAINERS})`;
+const SHELF_SCOPE = `${CHANNEL_PAGE} ${SHELF_CONTAINER}`;
 
 const JOIN_SELECTOR = [
     ...JOIN_TARGETS.map((target) => `${HEADER_SCOPE} ${target}`),
-    `${CHANNEL_PAGE} ${SHELF_CONTAINER} ${SHELF_TARGET}`,
+    ...SHELF_TARGETS.map((target) => `${SHELF_SCOPE} ${target}`),
 ].join(",\n");
 
 const JOIN_CSS = `${JOIN_SELECTOR} {\n    display: none !important;\n}`;
@@ -53,8 +54,8 @@ const detachJoinButtons = (): void => {
     }
 
     for (const shelf of observedRoot.querySelectorAll(SHELF_CONTAINER)) {
-        for (const actionButton of shelf.querySelectorAll(SHELF_TARGET)) {
-            actionButton.remove();
+        for (const joinButton of shelf.querySelectorAll(SHELF_TARGETS_SELECTOR)) {
+            joinButton.remove();
         }
     }
 };
