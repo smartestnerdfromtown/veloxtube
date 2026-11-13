@@ -11,9 +11,14 @@ let styleElement: HTMLStyleElement | null = null;
 let observer: MutationObserver | null = null;
 let observedRoot: Element | null = null;
 let scheduled = false;
+let active = false;
 
 const detachBells = (): void => {
     scheduled = false;
+
+    if (!active) {
+        return;
+    }
 
     for (const bell of document.querySelectorAll(BELL_SELECTOR)) {
         bell.remove();
@@ -38,7 +43,13 @@ const onMutations = (records: MutationRecord[]): void => {
     }
 };
 
-const setStyles = (): void => {
+const setStyles = (enabled: boolean): void => {
+    if (!enabled) {
+        styleElement?.remove();
+        styleElement = null;
+        return;
+    }
+
     if (styleElement?.isConnected) {
         return;
     }
@@ -48,8 +59,20 @@ const setStyles = (): void => {
     (document.head ?? document.documentElement).append(styleElement);
 };
 
-export const initNotificationBell = (): void => {
-    setStyles();
+const disconnectObserver = (): void => {
+    observer?.disconnect();
+    observer = null;
+    observedRoot = null;
+};
+
+export const initNotificationBell = (enabled: boolean): void => {
+    active = enabled;
+    setStyles(enabled);
+
+    if (!enabled) {
+        disconnectObserver();
+        return;
+    }
 
     const root = document.querySelector(MASTHEAD);
 
@@ -57,14 +80,13 @@ export const initNotificationBell = (): void => {
         return;
     }
 
-    observer?.disconnect();
-    observedRoot = root;
+    disconnectObserver();
 
     if (!root) {
-        observer = null;
         return;
     }
 
+    observedRoot = root;
     observer = new MutationObserver(onMutations);
     observer.observe(root, { childList: true, subtree: true });
     detachBells();

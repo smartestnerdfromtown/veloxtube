@@ -18,6 +18,7 @@ const KEYS = [
     "sidebarShortsEnabled",
     "sidebarFooterEnabled",
     "topLogoEnabled",
+    "notificationBellEnabled",
     "topicBarEnabled",
     "moreFromYouTubeEnabled",
     "exploreMenuEnabled",
@@ -30,6 +31,7 @@ type Flags = {
     sidebarShortsEnabled: boolean;
     sidebarFooterEnabled: boolean;
     topLogoEnabled: boolean;
+    notificationBellEnabled: boolean;
     topicBarEnabled: boolean;
     moreFromYouTubeEnabled: boolean;
     exploreMenuEnabled: boolean;
@@ -42,6 +44,7 @@ const DEFAULTS: Flags = {
     sidebarShortsEnabled: true,
     sidebarFooterEnabled: true,
     topLogoEnabled: true,
+    notificationBellEnabled: true,
     topicBarEnabled: true,
     moreFromYouTubeEnabled: true,
     exploreMenuEnabled: true,
@@ -64,7 +67,7 @@ const apply = (): void => {
     initSidebarShorts(flags.sidebarShortsEnabled);
     initSidebarFooter(flags.sidebarFooterEnabled);
     initTopLogo(flags.topLogoEnabled);
-    initNotificationBell();
+    initNotificationBell(flags.notificationBellEnabled);
     initTopicBar(flags.topicBarEnabled);
 };
 
