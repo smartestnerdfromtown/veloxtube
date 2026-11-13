@@ -8,7 +8,7 @@
     "node": ">=20"
   },
   "scripts": {
-    "build": "node scripts/build.mjs && web-ext build --source-dir=dist --artifacts-dir=web-ext-artifacts --overwrite-dest",
+    "build": "node scripts/build.mjs && web-ext build --source-dir=dist --artifacts-dir=web-ext-artifacts --overwrite-dest && node scripts/release.mjs",
     "watch": "node scripts/build.mjs --watch",
     "lint": "eslint . && tsc --noEmit && web-ext lint --source-dir=dist",
     "format": "prettier --write .",

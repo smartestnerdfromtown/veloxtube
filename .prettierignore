@@ -1,3 +1,4 @@
 dist/
 web-ext-artifacts/
+released/
 package-lock.json
