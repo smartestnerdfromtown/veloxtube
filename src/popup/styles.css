@@ -1,66 +1,81 @@
 :root {
-  color-scheme: dark;
+    color-scheme: dark;
 }
 
 body {
-  width: 220px;
-  margin: 0;
-  padding: 12px 14px 14px;
-  background: #0f0f0f;
-  color: #f1f1f1;
-  font:
-    13px/1.4 system-ui,
-    sans-serif;
+    width: 220px;
+    margin: 0;
+    padding: 12px 14px 14px;
+    background: #0f0f0f;
+    color: #f1f1f1;
+    font:
+        13px/1.4 system-ui,
+        sans-serif;
 }
 
 h1 {
-  margin: 0 0 10px;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: #aaa;
+    margin: 0 0 10px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: #aaa;
+}
+
+h2 {
+    margin: 10px 0 2px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #717171;
 }
 
 label {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 6px 0;
-  cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 6px 0;
+    cursor: pointer;
+}
+
+hr {
+    margin: 6px 0;
+    border: 0;
+    border-top: 1px solid #272727;
 }
 
 input {
-  appearance: none;
-  flex: none;
-  width: 34px;
-  height: 20px;
-  margin: 0;
-  border-radius: 10px;
-  background: #3d3d3d;
-  cursor: pointer;
+    appearance: none;
+    flex: none;
+    width: 34px;
+    height: 20px;
+    margin: 0;
+    border-radius: 10px;
+    background: #3d3d3d;
+    cursor: pointer;
 }
 
 input::after {
-  content: "";
-  display: block;
-  width: 16px;
-  height: 16px;
-  margin: 2px;
-  border-radius: 50%;
-  background: #f1f1f1;
+    content: "";
+    display: block;
+    width: 16px;
+    height: 16px;
+    margin: 2px;
+    border-radius: 50%;
+    background: #f1f1f1;
 }
 
 input:checked {
-  background: #ff4e45;
+    background: #ff4e45;
 }
 
 input:checked::after {
-  transform: translateX(14px);
+    transform: translateX(14px);
 }
 
 input:focus-visible {
-  outline: 2px solid #ff4e45;
-  outline-offset: 2px;
+    outline: 2px solid #ff4e45;
+    outline-offset: 2px;
 }
