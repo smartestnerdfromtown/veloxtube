@@ -1,5 +1,7 @@
 const WATCH_OWNER = "ytd-watch-flexy ytd-video-owner-renderer";
-const JOIN_SELECTOR = "ytd-watch-flexy #sponsor-button";
+const JOIN_TARGETS = ["#sponsor-button", 'ytd-button-renderer:has(button[aria-label*="Join" i])'];
+const JOIN_TARGETS_SELECTOR = JOIN_TARGETS.join(",\n");
+const JOIN_SELECTOR = JOIN_TARGETS.map((target) => `${WATCH_OWNER} ${target}`).join(",\n");
 const JOIN_CSS = `${JOIN_SELECTOR} {\n    display: none !important;\n}`;
 
 let styleElement: HTMLStyleElement | null = null;
@@ -22,7 +24,7 @@ const detachJoinButton = (): void => {
         return;
     }
 
-    for (const joinButton of observedRoot.querySelectorAll("#sponsor-button")) {
+    for (const joinButton of observedRoot.querySelectorAll(JOIN_TARGETS_SELECTOR)) {
         joinButton.remove();
     }
 };

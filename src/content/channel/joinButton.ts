@@ -1,19 +1,27 @@
 const CHANNEL_PAGE = 'ytd-browse[page-subtype="channels"]';
-const CHANNEL_ACTIONS = `${CHANNEL_PAGE} yt-page-header-renderer yt-flexible-actions-view-model button-view-model`;
+const HEADER_CONTAINERS = "yt-page-header-renderer, ytd-c4-tabbed-header-renderer";
+const SHELF_CONTAINER = "ytd-recognition-shelf-renderer";
+
+const JOIN_TARGETS = [
+    "#sponsor-button",
+    "button-view-model:has(button.ytSpecButtonShapeNextTonal.ytSpecButtonShapeNextIconLeading)",
+    "button-view-model:has(button.yt-spec-button-shape-next--tonal.yt-spec-button-shape-next--icon-leading)",
+    'button-view-model:has(button[aria-label*="Join" i])',
+];
+const JOIN_TARGETS_SELECTOR = JOIN_TARGETS.join(",\n");
+const SHELF_TARGET = "#action-button:has(button)";
+const HEADER_SCOPE = `${CHANNEL_PAGE} :is(${HEADER_CONTAINERS})`;
 
 const JOIN_SELECTOR = [
-    `${CHANNEL_PAGE} yt-page-header-renderer #sponsor-button`,
-    `${CHANNEL_PAGE} ytd-c4-tabbed-header-renderer #sponsor-button`,
-    `${CHANNEL_ACTIONS}:has(button[aria-label*="Join" i])`,
-    `${CHANNEL_ACTIONS}:has(button.ytSpecButtonShapeNextTonal.ytSpecButtonShapeNextIconLeading)`,
-    `${CHANNEL_ACTIONS}:has(button.yt-spec-button-shape-next--tonal.yt-spec-button-shape-next--icon-leading)`,
-    `${CHANNEL_PAGE} ytd-recognition-shelf-renderer #action-button`,
+    ...JOIN_TARGETS.map((target) => `${HEADER_SCOPE} ${target}`),
+    `${CHANNEL_PAGE} ${SHELF_CONTAINER} ${SHELF_TARGET}`,
 ].join(",\n");
 
 const JOIN_CSS = `${JOIN_SELECTOR} {\n    display: none !important;\n}`;
 
-const JOIN_ROOTS =
-    ":is(yt-page-header-renderer, ytd-recognition-shelf-renderer, yt-flexible-actions-view-model)";
+const JOIN_ROOTS = `:is(${HEADER_CONTAINERS}, ${SHELF_CONTAINER}, yt-flexible-actions-view-model)`;
+
+const FEED_ITEM = ":is(ytd-rich-item-renderer, ytd-video-renderer, yt-lockup-view-model)";
 
 let styleElement: HTMLStyleElement | null = null;
 let observedRoot: Element | null = null;
@@ -27,8 +35,24 @@ const detachJoinButtons = (): void => {
         return;
     }
 
-    for (const joinButton of document.querySelectorAll(JOIN_SELECTOR)) {
-        joinButton.remove();
+    if (!observedRoot?.isConnected) {
+        observedRoot = document.querySelector(CHANNEL_PAGE);
+    }
+
+    if (!observedRoot) {
+        return;
+    }
+
+    for (const header of observedRoot.querySelectorAll(HEADER_CONTAINERS)) {
+        for (const joinButton of header.querySelectorAll(JOIN_TARGETS_SELECTOR)) {
+            joinButton.remove();
+        }
+    }
+
+    for (const shelf of observedRoot.querySelectorAll(SHELF_CONTAINER)) {
+        for (const actionButton of shelf.querySelectorAll(SHELF_TARGET)) {
+            actionButton.remove();
+        }
     }
 };
 
@@ -43,11 +67,17 @@ const scheduleDetach = (): void => {
 
 const onMutations = (records: MutationRecord[]): void => {
     for (const record of records) {
+        if (record.target instanceof Element && record.target.closest(JOIN_ROOTS)) {
+            scheduleDetach();
+            return;
+        }
+
         for (const node of record.addedNodes) {
-            if (
-                node instanceof Element &&
-                (node.matches(JOIN_ROOTS) || node.querySelector(JOIN_ROOTS))
-            ) {
+            if (!(node instanceof Element) || node.matches(FEED_ITEM)) {
+                continue;
+            }
+
+            if (node.matches(JOIN_ROOTS) || node.querySelector(JOIN_ROOTS)) {
                 scheduleDetach();
                 return;
             }
