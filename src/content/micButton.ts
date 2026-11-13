@@ -30,7 +30,7 @@ const detachMic = (): void => {
 };
 
 const scheduleCleanup = (): void => {
-    if (scheduled) {
+    if (!active || scheduled) {
         return;
     }
 
@@ -38,11 +38,21 @@ const scheduleCleanup = (): void => {
     queueMicrotask(detachMic);
 };
 
+const containsMic = (node: Node): boolean => {
+    if (!(node instanceof Element)) {
+        return false;
+    }
+
+    return node.matches(MIC_TYPES) || node.querySelector(MIC_TYPES) !== null;
+};
+
 const onMutations = (records: MutationRecord[]): void => {
     for (const record of records) {
-        if (record.addedNodes.length > 0) {
-            scheduleCleanup();
-            return;
+        for (const node of record.addedNodes) {
+            if (containsMic(node)) {
+                scheduleCleanup();
+                return;
+            }
         }
     }
 };
