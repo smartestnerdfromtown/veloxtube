@@ -7,9 +7,14 @@ let styleElement: HTMLStyleElement | null = null;
 let observedRoot: Element | null = null;
 let micRoot: Element | null = null;
 let scheduled = false;
+let active = false;
 
 const detachMic = (): void => {
     scheduled = false;
+
+    if (!active) {
+        return;
+    }
 
     if (!micRoot?.isConnected) {
         micRoot = document.querySelector(MASTHEAD);
@@ -44,7 +49,13 @@ const onMutations = (records: MutationRecord[]): void => {
 
 const observer = new MutationObserver(onMutations);
 
-const setStyles = (): void => {
+const setStyles = (enabled: boolean): void => {
+    if (!enabled) {
+        styleElement?.remove();
+        styleElement = null;
+        return;
+    }
+
     if (styleElement?.isConnected) {
         return;
     }
@@ -52,6 +63,12 @@ const setStyles = (): void => {
     styleElement = document.createElement("style");
     styleElement.textContent = MIC_CSS;
     (document.head ?? document.documentElement).append(styleElement);
+};
+
+const stopObserving = (): void => {
+    observer.disconnect();
+    observedRoot = null;
+    micRoot = null;
 };
 
 const observeHeader = (): void => {
@@ -62,19 +79,25 @@ const observeHeader = (): void => {
         return;
     }
 
-    observer.disconnect();
-    observedRoot = root;
-    micRoot = null;
+    stopObserving();
 
     if (!root) {
         return;
     }
 
+    observedRoot = root;
     observer.observe(root, { childList: true, subtree: true });
     detachMic();
 };
 
-export const initMicButton = (): void => {
-    setStyles();
+export const initMicButton = (enabled: boolean): void => {
+    active = enabled;
+    setStyles(enabled);
+
+    if (!enabled) {
+        stopObserving();
+        return;
+    }
+
     observeHeader();
 };
