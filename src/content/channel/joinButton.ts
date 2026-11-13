@@ -1,26 +1,31 @@
-const CHANNEL_ACTIONS = "yt-page-header-renderer yt-flexible-actions-view-model button-view-model";
+const CHANNEL_PAGE = 'ytd-browse[page-subtype="channels"]';
+const CHANNEL_ACTIONS = `${CHANNEL_PAGE} yt-page-header-renderer yt-flexible-actions-view-model button-view-model`;
 
 const JOIN_SELECTOR = [
-    "ytd-watch-flexy #sponsor-button",
-    "yt-page-header-renderer #sponsor-button",
-    "ytd-c4-tabbed-header-renderer #sponsor-button",
+    `${CHANNEL_PAGE} yt-page-header-renderer #sponsor-button`,
+    `${CHANNEL_PAGE} ytd-c4-tabbed-header-renderer #sponsor-button`,
     `${CHANNEL_ACTIONS}:has(button[aria-label*="Join" i])`,
     `${CHANNEL_ACTIONS}:has(button.ytSpecButtonShapeNextTonal.ytSpecButtonShapeNextIconLeading)`,
     `${CHANNEL_ACTIONS}:has(button.yt-spec-button-shape-next--tonal.yt-spec-button-shape-next--icon-leading)`,
-    'ytd-recognition-shelf-renderer #action-button:has(button[aria-label*="Join" i])',
+    `${CHANNEL_PAGE} ytd-recognition-shelf-renderer #action-button`,
 ].join(",\n");
 
 const JOIN_CSS = `${JOIN_SELECTOR} {\n    display: none !important;\n}`;
 
 const JOIN_ROOTS =
-    ":is(yt-page-header-renderer, ytd-video-owner-renderer, ytd-recognition-shelf-renderer, yt-flexible-actions-view-model)";
+    ":is(yt-page-header-renderer, ytd-recognition-shelf-renderer, yt-flexible-actions-view-model)";
 
 let styleElement: HTMLStyleElement | null = null;
 let observedRoot: Element | null = null;
 let scheduled = false;
+let active = false;
 
 const detachJoinButtons = (): void => {
     scheduled = false;
+
+    if (!active) {
+        return;
+    }
 
     for (const joinButton of document.querySelectorAll(JOIN_SELECTOR)) {
         joinButton.remove();
@@ -28,7 +33,7 @@ const detachJoinButtons = (): void => {
 };
 
 const scheduleDetach = (): void => {
-    if (scheduled) {
+    if (!active || scheduled) {
         return;
     }
 
@@ -52,7 +57,13 @@ const onMutations = (records: MutationRecord[]): void => {
 
 const observer = new MutationObserver(onMutations);
 
-const setStyles = (): void => {
+const setStyles = (enabled: boolean): void => {
+    if (!enabled) {
+        styleElement?.remove();
+        styleElement = null;
+        return;
+    }
+
     if (styleElement?.isConnected) {
         return;
     }
@@ -62,23 +73,34 @@ const setStyles = (): void => {
     (document.head ?? document.documentElement).append(styleElement);
 };
 
-export const initJoinButton = (): void => {
-    setStyles();
+const stopObserving = (): void => {
+    observer.disconnect();
+    observedRoot = null;
+};
 
-    const root = document.documentElement;
+export const initChannelJoinButton = (enabled: boolean): void => {
+    active = enabled;
+    setStyles(enabled);
 
-    if (root === observedRoot && root !== null) {
+    if (!enabled) {
+        stopObserving();
+        return;
+    }
+
+    const root = document.querySelector(CHANNEL_PAGE);
+
+    if (root === observedRoot && root?.isConnected) {
         detachJoinButtons();
         return;
     }
 
-    observer.disconnect();
-    observedRoot = root;
+    stopObserving();
 
     if (!root) {
         return;
     }
 
+    observedRoot = root;
     observer.observe(root, { childList: true, subtree: true });
     detachJoinButtons();
 };

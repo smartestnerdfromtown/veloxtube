@@ -5,7 +5,8 @@ import { initSidebarFooter } from "./sidebar/sidebarFooter";
 import { initTopLogo } from "./masthead/topLogo";
 import { initNotificationBell } from "./masthead/notificationBell";
 import { initMicButton } from "./masthead/micButton";
-import { initJoinButton } from "./channel/joinButton";
+import { initVideoJoinButton } from "./video/joinButton";
+import { initChannelJoinButton } from "./channel/joinButton";
 import { initTopicBar } from "./feeds/topicBar";
 import { initMoreFromYouTube } from "./sidebar/moreFromYouTube";
 import { initInFeedAds } from "./feeds/inFeedAds";
@@ -22,6 +23,8 @@ const KEYS = [
     "topLogoEnabled",
     "notificationBellEnabled",
     "micButtonEnabled",
+    "videoJoinButtonEnabled",
+    "channelJoinButtonEnabled",
     "topicBarEnabled",
     "moreFromYouTubeEnabled",
     "exploreMenuEnabled",
@@ -36,6 +39,8 @@ type Flags = {
     topLogoEnabled: boolean;
     notificationBellEnabled: boolean;
     micButtonEnabled: boolean;
+    videoJoinButtonEnabled: boolean;
+    channelJoinButtonEnabled: boolean;
     topicBarEnabled: boolean;
     moreFromYouTubeEnabled: boolean;
     exploreMenuEnabled: boolean;
@@ -50,6 +55,8 @@ const DEFAULTS: Flags = {
     topLogoEnabled: true,
     notificationBellEnabled: true,
     micButtonEnabled: true,
+    videoJoinButtonEnabled: true,
+    channelJoinButtonEnabled: true,
     topicBarEnabled: true,
     moreFromYouTubeEnabled: true,
     exploreMenuEnabled: true,
@@ -74,7 +81,8 @@ const apply = (): void => {
     initTopLogo(flags.topLogoEnabled);
     initNotificationBell(flags.notificationBellEnabled);
     initMicButton(flags.micButtonEnabled);
-    initJoinButton();
+    initVideoJoinButton(flags.videoJoinButtonEnabled);
+    initChannelJoinButton(flags.channelJoinButtonEnabled);
     initTopicBar(flags.topicBarEnabled);
 };
 
