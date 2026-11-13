@@ -9,10 +9,14 @@ const MINI_ENTRY_SELECTOR = `${MINI_GUIDE} #items > ytd-mini-guide-entry-rendere
 
 const EXPLORE_LINK_SELECTOR = [
     'a[href="/gaming"]',
-    'a[href^="/feed/"]',
     'a[href^="/podcasts"]',
-    'a[href$="memberships"]',
+    'a[href^="/feed/podcasts"]',
+    'a[href^="/feed/trending"]',
+    'a[href^="/feed/explore"]',
     'a[href="/playables"]',
+    'a[href^="/feed/storefront"]',
+    'a[href^="/paid_memberships"]',
+    'a[href="/memberships"]',
 ].join(",");
 
 const EXPLORE_SECTION = `${SECTION_SELECTOR}:has(${EXPLORE_LINK_SELECTOR})`;
