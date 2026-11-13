@@ -11,22 +11,15 @@ let styleElement: HTMLStyleElement | null = null;
 let observer: MutationObserver | null = null;
 let observedRoot: Element | null = null;
 let scheduled = false;
-let active = false;
 
 const detachJoinButton = (): void => {
     scheduled = false;
-
-    if (!active) {
-        return;
-    }
 
     if (!observedRoot?.isConnected) {
         observedRoot = document.querySelector(WATCH_OWNER);
     }
 
-    if (!observedRoot) {
-        return;
-    }
+    if (!observedRoot) return;
 
     for (const joinButton of observedRoot.querySelectorAll(JOIN_TARGETS_SELECTOR)) {
         joinButton.remove();
@@ -34,20 +27,15 @@ const detachJoinButton = (): void => {
 };
 
 const scheduleDetach = (): void => {
-    if (!active || scheduled) {
-        return;
-    }
+    if (scheduled) return;
 
     scheduled = true;
     queueMicrotask(detachJoinButton);
 };
 
 const onMutations = (records: MutationRecord[]): void => {
-    for (const record of records) {
-        if (record.addedNodes.length > 0) {
-            scheduleDetach();
-            return;
-        }
+    if (records.some((record) => record.addedNodes.length > 0)) {
+        scheduleDetach();
     }
 };
 
@@ -75,7 +63,6 @@ const stopObserving = (): void => {
 };
 
 export const initVideoJoinButton = (enabled: boolean): void => {
-    active = enabled;
     setStyles(enabled);
 
     if (!enabled) {
