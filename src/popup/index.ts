@@ -6,7 +6,11 @@ const KEYS = [
     "topLogoEnabled",
     "notificationBellEnabled",
     "micButtonEnabled",
+
+    // Video Page
     "videoJoinButtonEnabled",
+    "videoThanksButtonEnabled",
+
     "channelJoinButtonEnabled",
     "topicBarEnabled",
     "moreFromYouTubeEnabled",
@@ -24,7 +28,11 @@ const DEFAULTS: Record<Key, boolean> = {
     topLogoEnabled: true,
     notificationBellEnabled: true,
     micButtonEnabled: true,
+
+    // Video Page
     videoJoinButtonEnabled: true,
+    videoThanksButtonEnabled: true,
+
     channelJoinButtonEnabled: true,
     topicBarEnabled: true,
     moreFromYouTubeEnabled: true,
