@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
-  "description": "Hyper-minimal YouTube cleanifier for Firefox.",
+  "description": "minimal YouTube cleanifier for Firefox.",
   "engines": {
     "node": ">=20"
   },
