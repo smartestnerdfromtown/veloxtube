@@ -8,7 +8,7 @@ import { initMicButton } from "./masthead/micButton";
 
 // Video Page
 import { initVideoJoinButton } from "./video/joinButton";
-import { initVideoThanksButton } from "./video/showSupport"
+import { initVideoThanksButton } from "./video/showSupport";
 
 import { initChannelJoinButton } from "./channel/joinButton";
 import { initTopicBar } from "./feeds/topicBar";

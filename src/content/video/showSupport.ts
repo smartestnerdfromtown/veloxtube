@@ -1,11 +1,8 @@
-const WATCH_OWNER = "ytd-menu-renderer";
-const JOIN_TARGETS = [
-    // "#flexible-item-buttons",
-    ':is(button-view-model, yt-button-view-model, ytd-button-renderer):has(:is(button, a)[aria-label*="Thanks" i])',
-];
-const JOIN_TARGETS_SELECTOR = JOIN_TARGETS.join(",\n");
-const JOIN_SELECTOR = JOIN_TARGETS.map((target) => `${WATCH_OWNER} ${target}`).join(",\n");
-const JOIN_CSS = `${JOIN_SELECTOR} {\n    display: none !important;\n}`;
+const WATCH_METADATA = "ytd-watch-metadata";
+const BUTTON = ":is(button-view-model, yt-button-view-model, ytd-button-renderer)";
+const THANKS_LABEL = ':is([aria-label*="Thanks" i], [title*="Thanks" i])';
+const THANKS_BUTTON = `:is(${BUTTON}:has(${THANKS_LABEL}), ${BUTTON}${THANKS_LABEL})`;
+const HIDE_THANKS_BUTTON_CSS = `${WATCH_METADATA} ${THANKS_BUTTON} {\n    display: none !important;\n}`;
 
 let styleElement: HTMLStyleElement | null = null;
 let observer: MutationObserver | null = null;
@@ -16,12 +13,12 @@ const detachThanksButton = (): void => {
     scheduled = false;
 
     if (!observedRoot?.isConnected) {
-        observedRoot = document.querySelector(WATCH_OWNER);
+        observedRoot = document.querySelector(WATCH_METADATA);
     }
 
     if (!observedRoot) return;
 
-    for (const joinButton of observedRoot.querySelectorAll(JOIN_TARGETS_SELECTOR)) {
+    for (const joinButton of observedRoot.querySelectorAll(THANKS_BUTTON)) {
         joinButton.remove();
     }
 };
@@ -51,7 +48,7 @@ const setStyles = (enabled: boolean): void => {
     }
 
     styleElement = document.createElement("style");
-    styleElement.textContent = JOIN_CSS;
+    styleElement.textContent = HIDE_THANKS_BUTTON_CSS;
     (document.head ?? document.documentElement).append(styleElement);
 };
 
@@ -70,7 +67,7 @@ export const initVideoThanksButton = (enabled: boolean): void => {
         return;
     }
 
-    const root = document.querySelector(WATCH_OWNER);
+    const root = document.querySelector(WATCH_METADATA);
 
     if (root === observedRoot && root?.isConnected) {
         detachThanksButton();
