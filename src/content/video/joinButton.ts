@@ -1,4 +1,4 @@
-const WATCH_OWNER = "ytd-watch-flexy ytd-video-owner-renderer";
+const WATCH_OWNER = "ytd-video-owner-renderer";
 const JOIN_TARGETS = [
     "#sponsor-button",
     ':is(button-view-model, yt-button-view-model, ytd-button-renderer):has(:is(button, a)[aria-label*="Join" i])',

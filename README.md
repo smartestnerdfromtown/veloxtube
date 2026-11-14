@@ -24,6 +24,9 @@
 - Complete removal of Notification Bell". (13th November)
 - Complete removal of Channel and Video page "Join" Button. (13th November)
 
+0.2.TEST
+- Complete removal of "Show Thanks" button from video page. 14th November 2026
+
 ### Ideas
 
 ### Urgent Fixes
