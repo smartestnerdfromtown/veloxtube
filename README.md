@@ -26,6 +26,7 @@
 
 0.2.TEST
 - Complete removal of "Show Thanks" button from video page. 14th November 2026
+- Complete removal of "Share" button from video page. 14th November 2026
 
 ### Ideas
 

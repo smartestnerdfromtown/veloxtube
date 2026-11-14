@@ -9,6 +9,7 @@ import { initMicButton } from "./masthead/micButton";
 // Video Page
 import { initVideoJoinButton } from "./video/joinButton";
 import { initVideoThanksButton } from "./video/showSupport";
+import { initVideoShareButton } from "./video/shareButton";
 
 import { initChannelJoinButton } from "./channel/joinButton";
 import { initTopicBar } from "./feeds/topicBar";
@@ -31,6 +32,7 @@ const KEYS = [
     // Video Page
     "videoJoinButtonEnabled",
     "videoThanksButtonEnabled",
+    "initVideoShareButton",
 
     "channelJoinButtonEnabled",
     "topicBarEnabled",
@@ -51,6 +53,7 @@ type Flags = {
     // Video Page
     videoJoinButtonEnabled: boolean;
     videoThanksButtonEnabled: boolean;
+    videoShareButtonEnabled: boolean;
 
     channelJoinButtonEnabled: boolean;
     topicBarEnabled: boolean;
@@ -71,6 +74,7 @@ const DEFAULTS: Flags = {
     // Video Page
     videoJoinButtonEnabled: true,
     videoThanksButtonEnabled: true,
+    videoShareButtonEnabled: true,
 
     channelJoinButtonEnabled: true,
     topicBarEnabled: true,
@@ -101,6 +105,7 @@ const apply = (): void => {
     // Video Page
     initVideoJoinButton(flags.videoJoinButtonEnabled);
     initVideoThanksButton(flags.videoThanksButtonEnabled);
+    initVideoShareButton(flags.videoShareButtonEnabled);
 
     initChannelJoinButton(flags.channelJoinButtonEnabled);
     initTopicBar(flags.topicBarEnabled);
