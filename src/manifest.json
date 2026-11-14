@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "VeloxTube",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Minimal YouTube cleanifier for Firefox.",
   "browser_specific_settings": {
     "gecko": {
