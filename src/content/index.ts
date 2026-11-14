@@ -6,10 +6,11 @@ import { initTopLogo } from "./masthead/topLogo";
 import { initNotificationBell } from "./masthead/notificationBell";
 import { initMicButton } from "./masthead/micButton";
 
-// Video Page
+// ======================= VIDEO PAGE ====================== //
 import { initVideoJoinButton } from "./video/joinButton";
 import { initVideoThanksButton } from "./video/showSupport";
 import { initVideoShareButton } from "./video/shareButton";
+// ========================================================= //
 
 import { initChannelJoinButton } from "./channel/joinButton";
 import { initTopicBar } from "./feeds/topicBar";
@@ -29,10 +30,12 @@ const KEYS = [
     "notificationBellEnabled",
     "micButtonEnabled",
 
-    // Video Page
+    // ===== VIDEO PAGE ===== //
     "videoJoinButtonEnabled",
     "videoThanksButtonEnabled",
-    "initVideoShareButton",
+    "videoShareButtonEnabled",
+    // ====================== //
+
 
     "channelJoinButtonEnabled",
     "topicBarEnabled",
