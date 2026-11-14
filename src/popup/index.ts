@@ -7,10 +7,11 @@ const KEYS = [
     "notificationBellEnabled",
     "micButtonEnabled",
 
-    // Video Page
+    // ===== VIDEO PAGE ===== //
     "videoJoinButtonEnabled",
     "videoThanksButtonEnabled",
     "videoShareButtonEnabled",
+    // ====================== //
 
     "channelJoinButtonEnabled",
     "topicBarEnabled",

@@ -1,36 +1,49 @@
-# veloxtube
+# VeloxTube
 
-### feature roadmap
+VeloxTube is a minimal Firefox extension that hides selected interface elements on YouTube. Every change is controlled by a toggle in the toolbar popup. It is not an ad blocker and does not block video ads.
 
-11th November 2026:
+## Features
 
-- Sidebar Footer (copyright, about, press and other unnecessary text) Removal with Toggle Control
-- Removal of Top Header Logo from everywhere with Toggle Control
+- Masthead: hides the top logo, notification bell, and microphone button.
+- Home and search: hides Shorts.
+- Sidebar: hides Shorts, the footer links, "More from YouTube", and the Explore menu.
+- Feeds: hides the topic bar and in-feed sponsored cards.
+- Video page: hides the Join, Thanks, and Share buttons.
+- Channel page: hides the Join button.
 
-12th November 2026:
+## Privacy
 
-- Complete removal of Topic Bar (or Filter Chips / Feed Chips) or whatever it is called from both video feed and home feed with Toggle Control
-- Complete removal of "More from YouTube" section (or Guide Supplemental Section) or whatever it is called
-- Complete removal of "In-Feed Ad" (or Sponsored Feed Card / Promoted Video) or whatever it is called, because it may happen that user does not use any ad-blocker.
-- Complete removal of "Explore" section (or Guide Explore Section) or whatever it is called
+VeloxTube does not collect, store, sell, or transmit personal data. There is no telemetry, analytics, tracking, or remote logging, and the extension makes no network requests of its own.
 
-### Versions
+All preferences are boolean on/off flags saved with `browser.storage.local`. They stay in the local Firefox profile and are never sent anywhere. The extension reads and modifies the DOM only on YouTube pages. The popup reads the active tab's URL solely to decide whether to reload a YouTube tab after a setting changes; that value is not stored or transmitted.
 
-0.1.TEST
+The add-on's manifest declares `data_collection_permissions.required: ["none"]`, matching the behavior above.
 
-- Complete removal of "In-Feed Ad" (or Sponsored Feed Card / Promoted Video) or whatever it is called, because it may happen that user does not use any ad-blocker. (12th Novemeber 2026)
-- Complete removal of "Explore" section (or Guide Explore Section) or whatever it is called. (12th Novemeber 2026)
-- Complete removal of "Mic Button" section near search area. (13th November)
-- Complete removal of Notification Bell". (13th November)
-- Complete removal of Channel and Video page "Join" Button. (13th November)
+## Permissions
 
-0.2.TEST
-- Complete removal of "Show Thanks" button from video page. 14th November 2026
-- Complete removal of "Share" button from video page. 14th November 2026
+- `storage` — saves the toggle states locally.
+- `*://*.youtube.com/*` — lets the content script hide elements on YouTube pages.
 
-### Ideas
+No other permissions are requested.
 
-### Urgent Fixes
+## Installation
 
-- Removal of Shorts from Video feed.
-- Removal of Shorts from Liked feed.
+Load the built extension temporarily:
+
+1. `npm install`
+2. `npm run build`
+3. Open `about:debugging#/runtime/this-firefox`, choose "Load Temporary Add-on", and select `dist/manifest.json`.
+
+`npm run dev` starts a watch build and launches Firefox with the extension loaded.
+
+## Source code
+
+All code is written in TypeScript and bundled at build time. The extension does not download, evaluate, or execute remote code. The readable source is in `src/`; `npm run build` produces the release bundle.
+
+## Disclaimer
+
+VeloxTube is an independent project and is not affiliated with, endorsed by, or sponsored by YouTube or Google LLC. YouTube is a trademark of Google LLC.
+
+## License
+
+MIT. See [LICENSE](LICENSE).
